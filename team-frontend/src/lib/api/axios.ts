@@ -1,8 +1,10 @@
 import axios from "axios";
 
 export const Axios = axios.create({
-    baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL
-
+    baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    }
 })
 
 Axios.interceptors.request.use(
