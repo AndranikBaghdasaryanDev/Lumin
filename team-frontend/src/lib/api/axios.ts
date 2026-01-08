@@ -27,6 +27,8 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
       }
 
       if (status >= 500) {
