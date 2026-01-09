@@ -1,8 +1,10 @@
 import axios from "axios";
 
 export const Axios = axios.create({
-    baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL
-
+    baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    }
 })
 
 Axios.interceptors.request.use(
@@ -27,6 +29,8 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
       }
 
       if (status >= 500) {
