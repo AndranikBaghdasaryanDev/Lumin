@@ -1,4 +1,4 @@
-export interface CoreBackendResonse<T> {
+export interface CoreBackendResponse<T> {
   success: boolean;
   data?: T;
   error?: CoreBackendError;
