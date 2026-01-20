@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
+import logger from "./logger";
+import { response } from "express";
 
 const api = axios.create({
   baseURL: `${process.env.CORE_BACKEND_URL}`,
@@ -13,15 +15,29 @@ export const setAuthToken = (newToken: string | null) => {
   authToken = newToken;
 };
 
-api.interceptors.request.use((config) => {
-  //here should be request logging
-  //WIE-5
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  (config as any).metadata = { startTime: new Date() };
+
+  logger.info(
+    { method: config.method, url: config.url, data: config.data },
+    "Outgoing Core Backend request",
+  );
   return config;
 });
 
 api.interceptors.response.use((response) => {
-  //here should be response logging
-  //WIE-5
+  const startTime = (response.config as any).metadata.startTime;
+
+  logger.info(
+    {
+      method: response.config.method,
+      url: response.config.url,
+      status: response.status,
+      responseTime: Date.now() - startTime,
+    },
+    "Core Backend response",
+  );
+
   return response;
 });
 
