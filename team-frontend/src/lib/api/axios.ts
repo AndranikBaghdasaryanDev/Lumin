@@ -4,7 +4,7 @@ export const Axios = axios.create({
     baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL
 
 })
-
+export const a = Axios.interceptors
 Axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
