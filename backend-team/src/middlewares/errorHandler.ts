@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import type { CoreBackendResponse } from "../types/api-responses/core-backend-response.ts";
 import { errorResponse } from "../utils/response.ts";
+import type { ApiResponse } from "../types/api-responses/api.ts";
 
 export function errorHandler(
   err: any,
@@ -9,7 +9,7 @@ export function errorHandler(
   next: NextFunction,
 ) {
   if (err.response?.data) {
-    const coreErrorResponse = err.response.data as CoreBackendResponse<null>;
+    const coreErrorResponse = err.response.data as ApiResponse<null>;
 
     if (coreErrorResponse.error) {
       return errorResponse(
