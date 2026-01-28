@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
-import { checkCoreBackend } from "./health.service"
-import { successResponse } from "../utils/response"
+import { checkCoreBackend } from "./health.service.ts"
+import { successResponse } from "../utils/response.ts"
 
 export async function healthCheck(req: Request, res: Response) {
     const isConnected = await checkCoreBackend()

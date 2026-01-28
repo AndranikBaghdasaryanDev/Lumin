@@ -1,4 +1,4 @@
-import type { ApiError, ApiResponse } from "../types/api-responses/api";
+import type { ApiError, ApiResponse } from "../types/api-responses/api.ts";
 import type { Response } from "express";
 
 export function successResponse<T>(
