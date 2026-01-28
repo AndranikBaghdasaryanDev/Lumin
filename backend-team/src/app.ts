@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { httpLogger } from "./middlewares/httpLogger.ts";
 import healthRoute from "./health/health.route.ts";
+import { errorHandler } from "./middlewares/errorHandler.ts";
 
 export const app = express();
 app.use(httpLogger);
@@ -15,4 +16,5 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api', healthRoute)
+app.use("/api", healthRoute);
+app.use(errorHandler);
