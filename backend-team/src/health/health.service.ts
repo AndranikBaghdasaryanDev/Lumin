@@ -1,4 +1,4 @@
-import Axios from "../lib/api"
+import Axios from "../lib/api.ts"
 
 export async function checkCoreBackend(): Promise<boolean> {
     try {

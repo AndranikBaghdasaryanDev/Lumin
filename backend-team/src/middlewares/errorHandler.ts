@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import type { CoreBackendResponse } from "../types/api-responses/core-backend-response";
-import { errorResponse } from "../utils/response";
+import type { CoreBackendResponse } from "../types/api-responses/core-backend-response.ts";
+import { errorResponse } from "../utils/response.ts";
 
 export function errorHandler(
   err: any,
