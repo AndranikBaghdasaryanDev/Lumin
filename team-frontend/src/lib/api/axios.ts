@@ -6,7 +6,6 @@ export const Axios = axios.create({
         "Content-Type": "application/json",
     }
 })
-
 Axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
