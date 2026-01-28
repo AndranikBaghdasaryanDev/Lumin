@@ -1,6 +1,5 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
-import logger from "./logger";
-import { response } from "express";
+import logger from "./logger.ts";
 
 const api = axios.create({
   baseURL: `${process.env.CORE_BACKEND_URL}`,

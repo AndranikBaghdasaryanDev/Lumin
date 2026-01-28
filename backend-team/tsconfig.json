@@ -5,18 +5,27 @@
     // "rootDir": "./src",
     // "outDir": "./dist",
 
+    "typeRoots": ["./node_modules/@types", "./types"],
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "nodenext",
+    "moduleResolution": "NodeNext",
     "target": "esnext",
-    "types": [],
+    // "types": [""],
+    // For nodejs:
+    "lib": ["esnext"],
+    "types": ["node"],
+    // and npm install -D @types/node
 
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
 
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@/*": ["./src/types/*"]
+    // },
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
@@ -36,6 +45,13 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  // "include": [
+  //   "src/**/*",
+  //   "./src/types/**/*"
+  // ]
+
 }
