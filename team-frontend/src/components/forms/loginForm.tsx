@@ -3,62 +3,159 @@ import { loginSchema } from "../../lib/validations/auth";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../ui/Error";
-
+import { useState } from "react";
+import show from "../../assets/show.png"
+import hide from "../../assets/hide.png"
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { Loading } from "../ui/Loading";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 
 export const LoginForm = () => {
+    const {isLoading,login}:any = useAuthStore()
+    const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
+    const [error, setError] = useState({status:false,message:""});
     const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
         mode: "onChange"
     })
-
+    
+    const navigate = useNavigate();
     const handleSave = (data: LoginFormValues) => {
+
         console.log("Login Data:", data);
+        login(data);
         reset();
+        navigate("/dashboard");
     }
+    console.log("rerendered")
+    console.log(isLoading)
     return (
-        <form onSubmit={handleSubmit(handleSave)} className="max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
 
-            <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+  {/* ===== CENTER ===== */}
+  <main className="flex-1 flex items-center justify-center px-4">
+    <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-xl px-6 sm:px-8 py-8">
+      
+      {/* Logo */}
+      <div className="flex justify-center mb-4">
+        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+          L
+        </div>
+      </div>
 
-            {/* Email */}
-            <div className="mb-4">
-                {errors.email && <Error message={errors.email.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Email</label>
-                <input
-                    type="email"
-                    placeholder="Enter your email"
-                    autoComplete="email"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.email ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("email")}
-                />
-            </div>
+      {/* Title */}
+      <h1 className="text-2xl sm:text-3xl font-semibold text-center text-gray-900">
+        Welcome back to Lumin
+      </h1>
+      <p className="text-center text-sm text-gray-500 mt-1 mb-6">
+        Login with your email and password
+      </p>
 
-            {/* Password */}
-            <div className="mb-6">
-                {errors.password && <Error message={errors.password.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Password</label>
-                <input
-                    type="password"
-                    placeholder="Enter your password"
-                    autoComplete="current-password"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.password ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("password")}
-                />
-            </div>
+      {/* ===== YOUR FORM (LOGIC UNTOUCHED) ===== */}
+      <form
+        onSubmit={handleSubmit(handleSave)}
+        className="space-y-4"
+      >
+        {error.status && <Error message={error.message || "Error"} />}
+        {isLoading && <Loading />}
 
+        {/* Email */}
+        <div>
+          {errors.email && <Error message={errors.email.message} />}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            autoComplete="email"
+            {...register("email")}
+            className={`w-full h-11 px-4 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              errors.email ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+        </div>
+
+        {/* Password */}
+        <div >
+            {errors.password && <Error message={errors.password.message} />}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            type={togglePasswordVisibility ? "text" : "password"}
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            {...register("password")}
+            className={`w-full h-11 px-4 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              errors.password ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          <div className="relative">
             <button
-                type="submit"
-                disabled={Object.keys(errors).length > 0}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50"
-            >
-                Login
-            </button>
+            type="button"
+            onClick={() => setTogglePasswordVisibility(!togglePasswordVisibility)}
+            className="absolute right-3 bottom-[11px] opacity-70 hover:opacity-100"
+          >
+            <img
+              src={togglePasswordVisibility ? hide : show}
+              className="w-5 h-5"
+            />
+          </button>
+          </div>
+          
+        </div>
 
-        </form>
+        {/* Remember + Register */}
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center gap-2 text-gray-600">
+            <input type="checkbox" className="rounded border-gray-300" />
+            Keep me signed in
+          </label>
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400">OR</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Social */}
+        <button disabled={true} className="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
+          Continue with Google
+        </button>
+
+        <button disabled={true} className="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed">
+          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" />
+          Continue with Facebook
+        </button>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full h-11 mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  </main>
+
+  {/* ===== FOOTER ===== */}
+  <footer className="text-xs text-gray-400 text-center py-4 px-4">
+    By continuing, you agree to our
+    <span className="text-blue-600 cursor-pointer"> Terms </span>
+    and
+    <span className="text-blue-600 cursor-pointer"> Privacy Policy</span>
+  </footer>
+</div>
 
     )
 }
