@@ -10,7 +10,7 @@ export function errorHandler(
 ) {
   if (err.response?.data) {
     const coreErrorResponse = err.response.data as ApiResponse<null>;
-
+    
     if (coreErrorResponse.error) {
       return errorResponse(
         res,
@@ -20,6 +20,7 @@ export function errorHandler(
       );
     }
   }
+
   if (err.code && err.message) {
     return errorResponse(res, err.code, err.message, err?.statusCode);
   }

@@ -1,8 +1,8 @@
-import { type AnyZodObject, ZodError } from "zod/v3";
+import { ZodError, ZodType } from "zod";
 import type { Request, Response, NextFunction } from "express";
 import { errorResponse } from "../utils/response.ts";
 
-export function validate(schema: AnyZodObject) {
+export function validate(schema: ZodType) {
   return function (req: Request, res: Response, next: NextFunction) {
     try {
       schema.parse({
@@ -17,7 +17,7 @@ export function validate(schema: AnyZodObject) {
         return errorResponse(
           res,
           "VALIDATION_ERROR",
-          err.errors.map((e) => e.message).join(", "),
+          err.issues.map((e) => e.message).join(", "),
           400,
         );
       }
