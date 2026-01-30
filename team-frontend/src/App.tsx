@@ -8,7 +8,6 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 export default function App(){
   return <>
-    <h1 className="font-inter font-semibold">Lumin</h1>
     <BrowserRouter>
       <Routes>
         <Route element={<Layout/>}>
