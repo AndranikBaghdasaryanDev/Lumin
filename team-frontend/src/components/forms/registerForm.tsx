@@ -3,6 +3,15 @@ import { registerSchema } from "../../lib/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod/src/index.js";
 import { Error } from "../ui/Error";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Input } from "../reusable/input";
+import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
+import { LinkSocial } from "../reusable/linkSocial";
+import { TermsPolicy } from "../reusable/termsPolicy";
+import { Divider } from "../reusable/divider";
+import { Loading } from "../ui/Loading";
+import { useAuthStore } from "../../stores/authStore";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -12,94 +21,164 @@ export const RegisterForm = () => {
         mode: "onChange"
     })
 
+    const {isLoading}:any = useAuthStore();
+    const [error, setError] = useState({ status: false, message: "" });
+    const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
+    const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
+
     const handleSave = (data: RegisterFormValues) => {
         console.log("Register Data:", data);
         reset();
     }
 
-    return <>
-        <form onSubmit={handleSubmit(handleSave)} className="max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
+    return (
+        <div className="min-h-screen bg-gray-50 flex flex-col">
 
-            <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+            {/* ===== CENTER ===== */}
+            <main className="flex-1 flex items-center justify-center px-4">
+                <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-xl px-6 sm:px-8 py-8">
 
-            {/* First Name */}
-            <div className="mb-4">
-                {errors.firstName && <Error message={errors.firstName.message} />}
-                <label className="block text-gray-700 font-medium mb-1">First Name</label>
-                <input
-                    type="text"
-                    placeholder="Enter first name"
-                    autoComplete="given-name"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.firstName ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("firstName")}
-                />
-            </div>
+                    {/* Logo */}
+                    <div className="flex justify-center mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+                            L
+                        </div>
+                    </div>
 
-            {/* Last Name */}
-            <div className="mb-4">
-                {errors.lastName && <Error message={errors.lastName.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Last Name</label>
-                <input
-                    type="text"
-                    placeholder="Enter last name"
-                    autoComplete="family-name"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.lastName ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("lastName")}
-                />
-            </div>
+                    {/* Title */}
+                    <h1 className="text-2xl sm:text-3xl font-semibold text-center text-gray-900">
+                        Create your Lumin account
+                    </h1>
+                    <p className="text-center text-sm text-gray-500 mt-1 mb-6">
+                        Sign up with your email and password
+                    </p>
 
-            {/* Email */}
-            <div className="mb-4">
-                {errors.email && <Error message={errors.email.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Email</label>
-                <input
-                    type="email"
-                    placeholder="Enter email"
-                    autoComplete="email"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.email ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("email")}
-                />
-            </div>
+                    {/* ===== REGISTER FORM ===== */}
+                    <form onSubmit={handleSubmit(handleSave)} className="space-y-4">
+                        {error.status && <Error message={error.message || "Error"} />}
+                        {isLoading && <Loading />}
 
-            {/* Password */}
-            <div className="mb-6">
-                {errors.password && <Error message={errors.password.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Password</label>
-                <input
-                    type="password"
-                    placeholder="Enter password"
-                    autoComplete="new-password"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.password ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("password")}
-                />
-            </div>
+                        {/* First Name */}
+                        <div>
+                            {errors.firstName && <Error message={errors.firstName.message} />}
+                            <Input
+                                type="text"
+                                label="First Name"
+                                placeholder="Enter your first name"
+                                error={errors.firstName?.message || ""}
+                                {...register("firstName")}
+                            />
+                        </div>
 
-            {/* Confirm Password */}
-            <div className="mb-6">
-                {errors.confirmPassword && <Error message={errors.confirmPassword.message} />}
-                <label className="block text-gray-700 font-medium mb-1">Confirm Password</label>
-                <input
-                    type="password"
-                    placeholder="Confirm password"
-                    autoComplete="new-password"
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                        }`}
-                    {...register("confirmPassword")}
-                />
-            </div>
+                        {/* Last Name */}
+                        <div>
+                            {errors.lastName && <Error message={errors.lastName.message} />}
+                            <Input
+                                type="text"
+                                label="Last Name"
+                                placeholder="Enter your last name"
+                                error={errors.lastName?.message || ""}
+                                {...register("lastName")}
+                            />
+                        </div>
 
-            <button
-                type="submit"
-                disabled={Object.keys(errors).length > 0}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50"
-            >
-                Register
-            </button>
+                        {/* Email */}
+                        <div>
+                            {errors.email && <Error message={errors.email.message} />}
+                            <Input
+                                type="email"
+                                label="Email"
+                                placeholder="Enter your email"
+error={errors.email?.message || ""}
+                                {...register("email")}
+                            />
+                        </div>
 
-        </form>
-    </>
+                        {/* Password */}
+                        <div>
+                            {errors.password && <Error message={errors.password.message} />}
+                            <Input
+                                type={togglePasswordVisibility ? "text" : "password"}
+                                label="Password"
+                                placeholder="Enter your password"
+                                error={errors.password?.message || ""}
+                                {...register("password")}
+                            />
+                            <div className="relative">
+                                <ButtonToggleVisibility
+                                    type="button"
+                                    onClick={() => setTogglePasswordVisibility(!togglePasswordVisibility)}
+                                    src={togglePasswordVisibility ? "hide" : "show"}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Confirm Password */}
+                        <div>
+                            {errors.confirmPassword && <Error message={errors.confirmPassword.message} />}
+                            <Input
+                                type={toggleConfirmPasswordVisibility ? "text" : "password"}
+                                label="Confirm Password"
+                                placeholder="Confirm your password"
+                                error={errors.confirmPassword?.message || ""}
+                                {...register("confirmPassword")}
+                            />
+                            <div className="relative">
+                                <ButtonToggleVisibility
+                                    type="button"
+                                    onClick={() => setToggleConfirmPasswordVisibility(!toggleConfirmPasswordVisibility)}
+                                    src={toggleConfirmPasswordVisibility ? "hide" : "show"}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Terms + Login */}
+                        <div className="flex items-center justify-between text-sm">
+                            <label className="flex items-center gap-2 text-gray-600">
+                                <input type="checkbox" className="rounded border-gray-300" />
+                                I agree to terms
+                            </label>
+
+                            <Link to="/login" className="text-blue-600 hover:underline">
+                                Login
+                            </Link>
+                        </div>
+
+                        {/* Divider */}
+                        <Divider />
+
+                        {/* Social */}
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            text="Continue with Google"
+                        />
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+                            text="Continue with Facebook"
+                        />
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={Object.keys(errors).length > 0}
+                            className="w-full h-11 mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition disabled:opacity-50 cursor-not-allowed"
+                        >
+                            Register
+                        </button>
+</form>
+                </div>
+            </main>
+
+            {/* ===== FOOTER ===== */}
+            <footer className="text-xs text-gray-400 text-center py-4 px-4">
+                <TermsPolicy />
+            </footer>
+        </div>
+    )
 }
