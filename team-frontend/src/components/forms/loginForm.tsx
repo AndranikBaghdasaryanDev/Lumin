@@ -4,8 +4,8 @@ import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../ui/Error";
 import { useState } from "react";
-import show from "../../assets/show.png"
-import hide from "../../assets/hide.png"
+import show from "../../assets/show.svg"
+import hide from "../../assets/hide.svg"
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { Loading } from "../ui/Loading";
@@ -24,13 +24,10 @@ export const LoginForm = () => {
     const navigate = useNavigate();
     const handleSave = (data: LoginFormValues) => {
 
-        console.log("Login Data:", data);
         login(data);
         reset();
         navigate("/dashboard");
     }
-    console.log("rerendered")
-    console.log(isLoading)
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
 
