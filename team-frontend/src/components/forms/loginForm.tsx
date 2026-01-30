@@ -9,6 +9,8 @@ import hide from "../../assets/hide.svg"
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { Loading } from "../ui/Loading";
+import { Input } from "../reusable/input";
+import { Button } from "../reusable/button";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 
@@ -61,56 +63,51 @@ export const LoginForm = () => {
         {/* Email */}
         <div>
           {errors.email && <Error message={errors.email.message} />}
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
+          <Input 
             type="email"
+            label="Email"
             placeholder="Enter your email"
-            autoComplete="email"
             {...register("email")}
-            className={`w-full h-11 px-4 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            classNameInput={`w-full h-11 px-4 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
               errors.email ? "border-red-500" : "border-gray-300"
             }`}
+            classNameLabel="block text-sm font-medium text-gray-700 mb-1"
           />
         </div>
 
         {/* Password */}
         <div >
             {errors.password && <Error message={errors.password.message} />}
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
+          <Input 
             type={togglePasswordVisibility ? "text" : "password"}
+            label="Password"
             placeholder="Enter your password"
-            autoComplete="current-password"
             {...register("password")}
-            className={`w-full h-11 px-4 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            classNameInput={`w-full h-11 px-4 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
               errors.password ? "border-red-500" : "border-gray-300"
             }`}
+            classNameLabel="block text-sm font-medium text-gray-700 mb-1"
           />
           <div className="relative">
-            <button
+            <Button
             type="button"
             onClick={() => setTogglePasswordVisibility(!togglePasswordVisibility)}
-            className="absolute right-3 bottom-[11px] opacity-70 hover:opacity-100"
-          >
-            <img
-              src={togglePasswordVisibility ? hide : show}
-              className="w-5 h-5"
+            classNameButton="absolute bottom-1/2 right-3 -translate-y-1/2 bg-transparent p-0 border-0 cursor-pointer" 
+            src={togglePasswordVisibility ? hide : show}
+            classNameImg="w-5 h-5"
             />
-          </button>
           </div>
           
         </div>
 
         {/* Remember + Register */}
+        
         <div className="flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 text-gray-600">
             <input type="checkbox" className="rounded border-gray-300" />
             Keep me signed in
           </label>
+          
           <Link to="/register" className="text-blue-600 hover:underline">
             Register
           </Link>
@@ -124,15 +121,25 @@ export const LoginForm = () => {
         </div>
 
         {/* Social */}
-        <button disabled={true} className="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
-          Continue with Google
-        </button>
+        <Button 
+            type="button"
+            disabled={true}
+            classNameButton="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed"
+            classNameImg="w-5 h-5"
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            text="Continue with Google"
+        >
+          
+        </Button>
 
-        <button disabled={true} className="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed">
-          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" />
-          Continue with Facebook
-        </button>
+        <Button 
+            type="button"
+            disabled={true}
+            classNameButton="w-full h-11 border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 disabled:opacity-40 cursor-not-allowed"
+            classNameImg="w-5 h-5"
+            src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+            text="Continue with Facebook"
+        />
 
         {/* Submit */}
         <button
