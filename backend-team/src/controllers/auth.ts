@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { successResponse } from "../utils/response.ts";
 import api from "../lib/api.ts";
-import type { ApiError, ApiResponse } from "../types/api-responses/api.ts";
+import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { userRegister } from "../types/api-responses/register.ts";
 import type { userLogout } from "../types/api-responses/logout.ts";
 
