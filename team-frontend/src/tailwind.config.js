@@ -42,6 +42,21 @@ module.exports = {
                 inter: ['Inter', 'sans-serif'],
                 outfit: ['Outfit', 'sans-serif'],
             },
+            keyframes: {
+        'wholesome-spin': {
+          '0%': { transform: 'rotate(0deg) scale(1)', borderRadius: '30%' },
+          '50%': { transform: 'rotate(180deg) scale(1.1)', borderRadius: '45%' },
+          '100%': { transform: 'rotate(360deg) scale(1)', borderRadius: '30%' },
+        },
+        'leaf-breathe': {
+          '0%, 100%': { transform: 'scale(0.8) rotate(45deg)', opacity: '0.5' },
+          '50%': { transform: 'scale(1.1) rotate(45deg)', opacity: '1' },
+        }
+      },
+      animation: {
+        'wholesome-spin': 'wholesome-spin 3s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+        'leaf-breathe': 'leaf-breathe 1.5s ease-in-out infinite',
+      },
         },
     },
 }
