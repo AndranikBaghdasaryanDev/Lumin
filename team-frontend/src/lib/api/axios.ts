@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "../../stores/authStore";
 
 export const Axios = axios.create({
     baseURL: import.meta.env.VITE_REACT_PUBLIC_API_URL,
@@ -28,7 +29,7 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
-        localStorage.removeItem("token");
+        useAuthStore.getState().logout()
         window.location.href = "/login";
       }
 
