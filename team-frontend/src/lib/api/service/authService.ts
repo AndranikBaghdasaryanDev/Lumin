@@ -1,3 +1,5 @@
+import type { User } from "../../../types/user";
+import { Axios } from "../axios";
 
 export const authService = {
     login: async (email: string, password: string) => {
@@ -9,12 +11,18 @@ export const authService = {
             refreshToken: "dummyRefreshToken"
         }
     },
-    register: async (userData: any) => {
+    register: async (userData: User) => {
         return {
-            user: { id: 2, ...userData },
+            user: { ...userData, id: userData.id || Date.now() },
             accessToken: "dummyAccessToken",
             refreshToken: "dummyRefreshToken",
         };
+    },
+    logout: () => {
+        return Axios.post("/api/auth/logout");
+    },
+    checkAuth: () => {
+        return Axios.get("/api/auth/me");
     }
 
 }

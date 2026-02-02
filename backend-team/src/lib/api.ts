@@ -8,17 +8,11 @@ const api = axios.create({
   },
 });
 
-let authToken: string | null = null;
-
-export const setAuthToken = (newToken: string | null) => {
-  authToken = newToken;
-};
-
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   (config as any).metadata = { startTime: new Date() };
 
   logger.info(
-    { method: config.method, url: config.url, data: config.data },
+    { method: config.method, url: config.url, data: config.data, headers: config.headers },
     "Outgoing Core Backend request",
   );
   return config;
@@ -38,13 +32,6 @@ api.interceptors.response.use((response) => {
   );
 
   return response;
-});
-
-api.interceptors.request.use((config) => {
-  if (authToken) {
-    config.headers.Authorization = `Bearer ${authToken}`;
-  }
-  return config;
 });
 
 export default api;
