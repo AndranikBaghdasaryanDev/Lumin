@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import env from "../config/env.ts";
-import { setAuthToken } from "../lib/api.ts";
 
 export function auth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.get("authorization");
@@ -23,7 +22,6 @@ export function auth(req: Request, res: Response, next: NextFunction) {
       statusCode: 401,
     };
   }
-  setAuthToken(token);
 
   try {
     const payload = jwt.verify(token, env.JWT_SECRET);
