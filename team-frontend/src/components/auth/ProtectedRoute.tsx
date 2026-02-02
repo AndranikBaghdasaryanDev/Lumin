@@ -1,21 +1,22 @@
 import { Loading } from "../ui/Loading";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../stores/authStore";
+
 import { useEffect } from "react";
-export const ProtectedRoute = ({children}:{children:React.ReactNode}) => {
-    const {isAuthenticated,hasHydrated}:any = useAuthStore();
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        if(!isAuthenticated){
-            navigate("/login");
-        }
-    },[isAuthenticated,navigate])
-    
-    if(!hasHydrated)return <Loading/>
+export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, hasHydrated }: any = useAuthStore();
+  const navigate = useNavigate();
 
-    
-    return <>
-        {children}
-    </>
-}
+  useEffect(() => {
+    if (hasHydrated && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [hasHydrated, isAuthenticated, navigate]);
+
+  if (!hasHydrated) return <Loading />;
+  if (!isAuthenticated) return null;
+
+
+  return <>{children}</>;
+};

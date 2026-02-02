@@ -1,43 +1,50 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authService } from "../lib/api/service/authService";
+import type { AuthState } from "../types/auth";
+import type { User } from "../types/user";
 
 
-export const useAuthStore = create(
+export const useAuthStore = create<AuthState>()(
     persist(
-        (set,get) => ({
+        (set) => ({
             user:null,
             accessToken:null,
             refreshToken:null,
             isLoading:false,
             isAuthenticated:false,
             hasHydrated:false,
-            login: async (email:string,password:string) => {
+            login: (email:string,password:string) => {
                 set({isLoading:true});
-                const response = await authService.login(email,password);
-                
-                set(
-                    {
-                        user:response.user,
-                        accessToken:response.accessToken,
-                        refreshToken:response.refreshToken,
-                        isLoading:false,
-                        isAuthenticated:true
-                    }
-                )
+                authService.login(email,password)
+                .then((response) => {
+                    set(
+                        {   
+                            user:response.user,
+                            accessToken:response.accessToken,
+                            refreshToken:response.refreshToken,
+                            isLoading:false,
+                            isAuthenticated:true
+                        }
+                    )
+                })
+                .catch((error) => {
+                    set({isLoading:false});
+                    throw error;
+                })
             },
-            logout: async () => {
-                set(
-                    {
-                        user:null,
-                        accessToken:null,
-                        refreshToken:null,
-                        isLoading:false,
-                        isAuthenticated:false
-                    }
-                )
+            logout: () => {
+                set({isLoading:true});
+                authService.logout()
+                .then(() => {
+                    set({user:null,accessToken:null,refreshToken:null,isLoading:false,isAuthenticated:false});
+                })
+                .catch(error => {
+                    set({isLoading:false});
+                    throw error;
+                })
             },
-            register: async (userData:any) => {
+            register: async (userData:User) => {
                 set({isLoading:true});
                 let response = await authService.register(userData);
                 set(
@@ -50,7 +57,7 @@ export const useAuthStore = create(
                     }
                 )
             },
-            setAuth: async (user:object,accessToken:string,refreshToken:string) => {
+            setAuth: async (user:User,accessToken:string,refreshToken:string) => {
                 set(
                     {
                         user:user,
@@ -61,20 +68,22 @@ export const useAuthStore = create(
                     }
                 )
             },
-            checkAuth: async () => {
+            checkAuth: () => {
                 set({isLoading:true});
-                const accessToken = (get() as any).accessToken;
-                if(accessToken){
+                authService.checkAuth()
+                .then(() => {
                     set({
                         isAuthenticated:true,
-                        isLoading:false
                     })
-                } else {
+                })
+                .catch(() => {
                     set({
                         isAuthenticated:false,
-                        isLoading:false
-                    })
-                }
+                    })          
+                })
+                .finally(() => {
+                    set({isLoading:false});
+                })
             },
             setHasHydrated: (state: boolean) => {
                 set({ hasHydrated: state });

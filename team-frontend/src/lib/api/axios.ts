@@ -9,7 +9,7 @@ export const Axios = axios.create({
 })
 Axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = useAuthStore.getState().accessToken;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -30,7 +30,6 @@ Axios.interceptors.response.use(
       if (status === 401) {
         console.error("Unauthorized – token expired");
         useAuthStore.getState().logout()
-        window.location.href = "/login";
       }
 
       if (status >= 500) {
