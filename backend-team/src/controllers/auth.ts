@@ -2,13 +2,13 @@ import type { NextFunction, Request, Response } from "express";
 import { successResponse } from "../utils/response.ts";
 import api from "../lib/api.ts";
 import type { ApiResponse } from "../types/api-responses/api.ts";
-import type { userRegister } from "../types/api-responses/register.ts";
-import type { userLogout } from "../types/api-responses/logout.ts";
+import type { UserRegister } from "../types/api-responses/register.ts";
+import type { UserLogout } from "../types/api-responses/logout.ts";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.post<ApiResponse<userRegister>>(
+      const response = await api.post<ApiResponse<UserRegister>>(
         "/auth/register",
         req.body,
       );
@@ -23,7 +23,7 @@ class AuthController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.post<ApiResponse<userLogout>>("/auth/logout");
+      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout");
 
       if (response.data.success) {
         return successResponse(res, response.data.data);

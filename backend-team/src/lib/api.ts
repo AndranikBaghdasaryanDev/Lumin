@@ -18,7 +18,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   (config as any).metadata = { startTime: new Date() };
 
   logger.info(
-    { method: config.method, url: config.url, data: config.data },
+    { method: config.method, url: config.url, data: config.data, headers: config.headers },
     "Outgoing Core Backend request",
   );
   return config;

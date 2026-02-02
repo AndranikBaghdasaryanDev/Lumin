@@ -1,4 +1,4 @@
-export interface profile {
+export interface Profile {
   firstName: string;
   lastName: string;
   phone: string;
