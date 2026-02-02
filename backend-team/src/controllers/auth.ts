@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import { successResponse } from "../utils/response.ts";
+import { errorResponse, successResponse } from "../utils/response.ts";
 import api from "../lib/api.ts";
 import type { ApiError, ApiResponse } from "../types/api-responses/api.ts";
 import type { userRegister } from "../types/api-responses/register.ts";
 import type { userLogout } from "../types/api-responses/logout.ts";
-import type { currentUser } from "../types/api-responses/currentUser.ts";
+import type { CurrentUser } from "../types/api-responses/CurrentUser.ts";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -36,12 +36,20 @@ class AuthController {
 
   async getCurrentUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.get<ApiResponse<currentUser>>("/internal/auth/me");
+      const authHeader = req.headers.authorization
+      const response = await api.get<ApiResponse<CurrentUser>>("/auth/me", authHeader ? { headers: { Authorization: authHeader } } : {});
       if (response.data.success) {
         return successResponse(res, response.data.data);
+      } else {
+        return errorResponse(
+          res,
+          response.data?.error?.code || "AUTH_FAILED",
+          response.data?.error?.message || "Failed to fetch the current user",
+          401
+        );
       }
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 }

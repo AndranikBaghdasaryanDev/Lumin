@@ -1,5 +1,5 @@
-export interface currentUser {
-    id: string,
+export interface CurrentUser {
+    id: string
     email: string
     firstName: string
     lastName: string
