@@ -1,3 +1,3 @@
-export interface userLogout {
+export interface UserLogout {
     message: string;
 }

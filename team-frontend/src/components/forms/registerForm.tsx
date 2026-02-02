@@ -10,8 +10,9 @@ import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
 import { LinkSocial } from "../reusable/linkSocial";
 import { TermsPolicy } from "../reusable/termsPolicy";
 import { Divider } from "../reusable/divider";
-import { Loading } from "../ui/Loading";
+import { Loading } from "../ui/Loading.tsx";
 import { useAuthStore } from "../../stores/authStore";
+import { LogoLumin } from "../reusable/logoLumin";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -40,9 +41,7 @@ export const RegisterForm = () => {
 
                     {/* Logo */}
                     <div className="flex justify-center mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
-                            L
-                        </div>
+                        <LogoLumin/>
                     </div>
 
                     {/* Title */}

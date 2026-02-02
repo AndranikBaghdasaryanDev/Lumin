@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useState } from "react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { LogoLumin } from "../reusable/logoLumin";
 
 export const Header = () => {
   const { logout }: any = useAuthStore();
@@ -9,24 +11,26 @@ export const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   return (
-    <header className="w-full bg-gray-800 text-white">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-[50px]">
-        {/* Logo */}
-        <h1
-          className="font-bold text-lg cursor-pointer"
+    <header className="w-full bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-[64px]">
+        
+        {/* Logo Section */}
+        <div 
+          className="flex items-center gap-2 cursor-pointer group"
           onClick={() => {
             if (location.pathname === "/") navigate("/login");
             if (location.pathname === "/dashboard") navigate("/dashboard");
           }}
         >
-          Lumin
-        </h1>
+          <LogoLumin/>
+          <h1 className="font-bold text-xl tracking-tight text-gray-900">Lumin</h1>
+        </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Desktop Menu - Logic Unchanged */}
+        <div className="hidden md:flex items-center gap-3">
           {location.pathname === "/dashboard" ? (
             <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition"
+              className="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 px-5 rounded-xl transition-all active:scale-95 border border-red-100"
               onClick={() => logout()}
             >
               Logout
@@ -34,16 +38,16 @@ export const Header = () => {
           ) : (
             <>
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                className="text-gray-600 hover:text-blue-600 font-semibold py-2 px-4 transition-colors"
                 onClick={() => navigate("/login")}
               >
                 Login
               </button>
               <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-md shadow-blue-100 active:scale-95"
                 onClick={() => navigate("/register")}
               >
-                Register
+                Get Started
               </button>
             </>
           )}
@@ -52,20 +56,20 @@ export const Header = () => {
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button
-            className="text-white focus:outline-none"
+            className="text-gray-600 p-2 rounded-lg hover:bg-gray-50 transition"
             onClick={() => setMobileMenu(!mobileMenu)}
           >
-            ☰
+            {mobileMenu ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Logic Unchanged */}
       {mobileMenu && (
-        <div className="md:hidden flex flex-col gap-2 px-4 pb-2 bg-gray-700">
+        <div className="md:hidden flex flex-col gap-3 px-6 pb-6 pt-2 bg-white border-b border-gray-100 animate-fadeIn">
           {location.pathname === "/dashboard" ? (
             <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition"
+              className="w-full bg-red-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-red-100"
               onClick={() => {
                 logout();
                 setMobileMenu(false);
@@ -76,7 +80,7 @@ export const Header = () => {
           ) : (
             <>
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                className="w-full bg-gray-50 text-gray-700 font-bold py-3 rounded-xl transition"
                 onClick={() => {
                   navigate("/login");
                   setMobileMenu(false);
@@ -85,7 +89,7 @@ export const Header = () => {
                 Login
               </button>
               <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
+                className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-100"
                 onClick={() => {
                   navigate("/register");
                   setMobileMenu(false);
