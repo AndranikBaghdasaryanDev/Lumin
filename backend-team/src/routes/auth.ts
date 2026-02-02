@@ -13,5 +13,6 @@ authRouter.post(
 );
 
 authRouter.post("/auth/logout",auth, controller.logout);
+authRouter.get('/auth/me', auth, controller.getCurrentUser)
 
 export default authRouter;
