@@ -14,5 +14,6 @@ authRouter.post(
 
 authRouter.post("/auth/logout",auth, controller.logout);
 authRouter.get('/auth/me', auth, controller.getCurrentUser)
+authRouter.post("/auth/refresh", controller.refreshToken)
 
 export default authRouter;

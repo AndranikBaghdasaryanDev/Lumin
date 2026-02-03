@@ -4,6 +4,7 @@ import api from "../lib/api.ts";
 import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { UserRegister } from "../types/api-responses/register.ts";
 import type { UserLogout } from "../types/api-responses/logout.ts";
+import type { CurrentUser } from "../types/api-responses/currentUser.ts";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -49,6 +50,34 @@ class AuthController {
       }
     } catch (err) {
       next(err);
+    }
+  }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken } = req.body
+
+      if(!refreshToken) {
+        return errorResponse(
+          res,
+          "REFRESH_TOKEN_MISSING",
+          "Refresh token is required"
+        )
+      }
+
+      const response = await api.post<ApiResponse<{ accessToken: string, refershToken: string }>>("/auth/refresh", { refreshToken })
+      if(!response.data.success) {
+        return errorResponse(
+          res,
+          response.data.error?.code ?? "REFRESH_FAILED",
+          response.data.error?.message ?? "Failed to refresh token",
+          401
+        )
+      }
+
+      return successResponse(res, response.data.data)
+    } catch (err) {
+      next(err)
     }
   }
 }
