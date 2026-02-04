@@ -37,29 +37,29 @@ export const LoginForm = () => {
         navigate("/dashboard");
     }
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
 
             {/* ===== CENTER ===== */}
             <main className="flex-1 flex items-center justify-center px-4">
-                <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-xl px-6 sm:px-8 py-8">
+                <div className="w-full max-w-sm sm:max-w-md bg-white rounded-3xl shadow-2xl px-8 sm:px-10 py-12 border border-gray-100/50">
 
                     {/* Logo */}
-                    <div className="flex justify-center mb-4">
+                    <div className="flex justify-center mb-8">
                         <LogoLumin/>
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-2xl sm:text-3xl font-semibold text-center text-gray-900">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-3">
                         Welcome back to Lumin
                     </h1>
-                    <p className="text-center text-sm text-gray-500 mt-1 mb-6">
+                    <p className="text-center text-gray-500 text-base mb-10">
                         Login with your email and password
                     </p>
 
                     {/* ===== YOUR FORM (LOGIC UNTOUCHED) ===== */}
                     <form
                         onSubmit={handleSubmit(handleSave)}
-                        className="space-y-4"
+                        className="space-y-6"
                     >
                         {error.status && <Error message={error.message || "Error"} />}
                         {isLoading && <Loading />}
@@ -100,12 +100,12 @@ export const LoginForm = () => {
                         {/* Remember + Register */}
 
                         <div className="flex items-center justify-between text-sm">
-                            <label className="flex items-center gap-2 text-gray-600">
-                                <input type="checkbox" className="rounded border-gray-300" />
-                                Keep me signed in
+                            <label className="flex items-center gap-3 text-gray-600 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span className="font-medium">Keep me signed in</span>
                             </label>
 
-                            <Link to="/register" className="text-blue-600 hover:underline">
+                            <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
                                 Register
                             </Link>
                         </div>
@@ -132,7 +132,7 @@ export const LoginForm = () => {
                         <button
                             type="submit"
                             disabled={Object.keys(errors).length > 0}
-                            className="w-full h-11 mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition disabled:opacity-50 cursor-not-allowed"
+                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
                         >
                             Login
                         </button>
@@ -141,7 +141,7 @@ export const LoginForm = () => {
             </main>
 
             {/* ===== FOOTER ===== */}
-            <footer className="text-xs text-gray-400 text-center py-4 px-4">
+            <footer className="text-xs text-gray-400 text-center py-6 px-4">
                 <TermsPolicy />
             </footer>
         </div>
