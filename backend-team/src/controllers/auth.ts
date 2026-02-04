@@ -5,6 +5,7 @@ import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { UserRegister } from "../types/api-responses/register.ts";
 import type { UserLogout } from "../types/api-responses/logout.ts";
 import type { CurrentUser } from "../types/api-responses/currentUser.ts";
+import type { Login } from "../types/api-responses/login.ts";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -72,6 +73,39 @@ class AuthController {
           response.data.error?.code ?? "REFRESH_FAILED",
           response.data.error?.message ?? "Failed to refresh token",
           401
+        )
+      }
+
+      return successResponse(res, response.data.data)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      if(!req.body) {
+        return errorResponse(
+          res,
+          "REQUEST_BODY_MISSING",
+          "Request body is required"
+        )
+      }
+      const { email, password } = req.body
+      if(!email || !password) {
+        return errorResponse(
+          res,
+          "MISSING_CREDENTIALS",
+          "Email and Password is required"
+        )
+      }
+
+      const response = await api.post<ApiResponse<Login>>('/auth/login', { email, password })
+      if(!response.data.success) {
+        return errorResponse(
+          res,
+          response.data.error?.code ?? "LOGIN_FAILED",
+          response.data.error?.message ?? "Invalid email or login"
         )
       }
 
