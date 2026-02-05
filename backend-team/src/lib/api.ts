@@ -1,10 +1,11 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import logger from "./logger.ts";
+import env from "../config/env.ts";
 
 const api = axios.create({
-  baseURL: `${process.env.CORE_BACKEND_URL}`,
+  baseURL: `${env.CORE_BACKEND_URL}`,
   headers: {
-    "API-Key": process.env.INTERNAL_API_KEY,
+    "x-api-key": env.INTERNAL_API_KEY,
   },
 });
 
@@ -12,7 +13,12 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   (config as any).metadata = { startTime: new Date() };
 
   logger.info(
-    { method: config.method, url: config.url, data: config.data, headers: config.headers },
+    {
+      method: config.method,
+      url: config.url,
+      data: config.data,
+      headers: config.headers,
+    },
     "Outgoing Core Backend request",
   );
   return config;
