@@ -6,6 +6,8 @@ import { profileSchema } from "../schemas/profile.ts";
 
 const profileRouter = express.Router();
 
+profileRouter.get("/profile", auth, controller.get);
+
 profileRouter.patch(
   "/profile",
   auth,
