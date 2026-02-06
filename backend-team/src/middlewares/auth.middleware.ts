@@ -33,7 +33,8 @@ export function auth(req: Request, res: Response, next: NextFunction) {
         statusCode: 401,
       };
     }
-
+    
+    req.token = token;
     req.user = payload;
     next();
 
