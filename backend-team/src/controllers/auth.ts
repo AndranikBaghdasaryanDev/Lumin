@@ -86,22 +86,7 @@ class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      if(!req.body) {
-        return errorResponse(
-          res,
-          "REQUEST_BODY_MISSING",
-          "Request body is required"
-        )
-      }
       const { email, password } = req.body
-      if(!email || !password) {
-        return errorResponse(
-          res,
-          "MISSING_CREDENTIALS",
-          "Email and Password is required"
-        )
-      }
-
       const response = await api.post<ApiResponse<Login>>('/auth/login', { email, password })
       if(!response.data.success) {
         return errorResponse(
