@@ -25,7 +25,9 @@ class AuthController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout");
+      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout", {}, { 
+        headers: { Authorization: `Bearer ${req.token}` }
+       });
 
       if (response.data.success) {
         return successResponse(res, response.data.data);
