@@ -1,7 +1,7 @@
 import express from "express";
 import controller from "../controllers/auth.ts";
 import { validate } from "../middlewares/validate.middleware.ts";
-import { registerSchema } from "../schemas/auth.ts";
+import { loginSchema, registerSchema } from "../schemas/auth.ts";
 import { auth } from "../middlewares/auth.middleware.ts";
 
 const authRouter = express.Router();
@@ -15,6 +15,6 @@ authRouter.post(
 authRouter.post("/auth/logout",auth, controller.logout);
 authRouter.get('/auth/me', auth, controller.getCurrentUser)
 authRouter.post("/auth/refresh", controller.refreshToken)
-authRouter.post('/auth/login', controller.login)
+authRouter.post('/auth/login', validate(loginSchema), controller.login)
 
 export default authRouter;
