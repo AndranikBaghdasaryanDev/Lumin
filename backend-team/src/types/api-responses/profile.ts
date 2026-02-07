@@ -8,7 +8,9 @@ export interface UserProfile {
   phone: string;
   dateOfBirth: string;
   studentProfile: StudentProfile | null;
-  instructorProfile: string
+  instructorProfile: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface StudentProfile {
