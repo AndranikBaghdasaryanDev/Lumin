@@ -27,19 +27,19 @@ export function auth(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET);
+    // const payload = jwt.verify(token, env.JWT_SECRET);
 
-    if (typeof payload === "string") {
-      return errorResponse(
-        res,
-        "INVALID_OR_MISSING_TOKEN",
-        "Token is missing",
-        401,
-      );
-    }
+    // if (typeof payload === "string") {
+    //   return errorResponse(
+    //     res,
+    //     "INVALID_OR_MISSING_TOKEN",
+    //     "Token is missing",
+    //     401,
+    //   );
+    // }
     
     req.token = token;
-    req.user = payload;
+    // req.user = payload;
     next();
   } catch {
     return errorResponse(
