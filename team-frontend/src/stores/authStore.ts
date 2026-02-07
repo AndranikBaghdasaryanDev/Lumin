@@ -14,10 +14,10 @@ export const useAuthStore = create<AuthState>()(
             isLoading:false,
             isAuthenticated:false,
             hasHydrated:false,
-            login: (email:string,password:string) => {
-                set({isLoading:true});
-                authService.login(email,password)
-                .then((response) => {
+            login: async (email:string,password:string) => {
+                try{
+                    set({isLoading:true});
+                    const response = await authService.login(email,password);
                     set(
                         {   
                             user:response.user,
@@ -26,12 +26,11 @@ export const useAuthStore = create<AuthState>()(
                             isLoading:false,
                             isAuthenticated:true
                         }
-                    )
-                })
-                .catch((error) => {
+                    );
+                }catch(error){
                     set({isLoading:false});
                     throw error;
-                })
+                }
             },
             logout: () => {
                 set({isLoading:true});
