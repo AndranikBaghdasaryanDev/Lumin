@@ -14,6 +14,7 @@ import { LinkSocial } from "../reusable/linkSocial";
 import { TermsPolicy } from "../reusable/termsPolicy";
 import { Divider } from "../reusable/divider";
 import { LogoLumin } from "../reusable/logoLumin";
+import { useToastStore } from "../../stores/toastStore.ts";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 
@@ -29,12 +30,18 @@ export const LoginForm = () => {
             password: ""
         }
     })
+    const {success: toastSuccess, error: toastError} = useToastStore();
     
     const navigate = useNavigate();
-    const handleSave = (data: LoginFormValues) => {
-        login(data);
-        reset();
-        navigate("/dashboard");
+    const handleSave = async (data: LoginFormValues) => {
+        try{
+            await login(data.email, data.password);
+            toastSuccess("Logged in successfully");
+            reset();
+            navigate("/dashboard");
+        }catch(error: any) {
+            toastError(error.message || "Login failed");
+        }
     }
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
