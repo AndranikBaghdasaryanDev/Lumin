@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import logger from "./logger.ts";
 import env from "../config/env.ts";
+import type { ApiResponse } from "../types/api-responses/api.ts";
 
 const api = axios.create({
   baseURL: `${env.CORE_BACKEND_URL}`,
@@ -37,7 +38,22 @@ api.interceptors.response.use((response) => {
     "Core Backend response",
   );
 
-  return response;
+  const apiResponse: ApiResponse<any> = {
+    success: response.data.status === "success",
+    data: response.data.data,
+  };
+
+  if (response.data.status !== "success" && response.data.error) {
+    apiResponse.error = {
+      code: response.data.error.code,
+      message: response.data.error.message,
+    };
+  }
+
+  return {
+    ...response,
+    data: apiResponse,
+  };
 });
 
 export default api;

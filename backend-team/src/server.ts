@@ -13,11 +13,11 @@ function start() {
     logger.info(`🔧 API JSON Spec: http://localhost:${PORT}/api-docs.json`);
     
     // Open Swagger in browser
-    import('open').then(open => {
-      open.default(`http://localhost:${PORT}/api-docs`);
-    }).catch(() => {
-      logger.info('Could not open browser automatically. Please open the URL manually.');
-    });
+    // import('open').then(open => {
+    //   open.default(`http://localhost:${PORT}/api-docs`);
+    // }).catch(() => {
+    //   logger.info('Could not open browser automatically. Please open the URL manually.');
+    // });
   });
 
   setupGracefulShutdown(server);
