@@ -100,6 +100,7 @@ class AuthController {
         )
       }
 
+      console.log("Login failed:", email, password);
       const response = await api.post<ApiResponse<Login>>('/auth/login', { email, password })
       if(!response.data.success) {
         return errorResponse(
