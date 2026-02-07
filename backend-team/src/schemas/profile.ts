@@ -22,22 +22,11 @@ export const profileSchema = z.object({
       profileImage: z.url("Profile image must be valid URL").optional(),
       studentProfile: z
         .object({
-          jobTitle: z
-            .string()
-            .trim()
-            .min(2, "Job title must be at least 2 characters")
-            .optional(),
-
-          learningGoal: z
-            .string()
-            .trim()
-            .min(2, "Learning goal must be at least 2 characters")
-            .optional(),
-
-          learningInterests: z
-            .array(z.string().trim().min(2, "Interest cannot be empty"))
-            .min(1, "At least one learning interest is required")
-            .optional(),
+          age: z
+            .number()
+            .min(0, "Age can't be less than 0")
+            .max(120, "Age can't be more than 120"),
+          major: z.string().min(2, "Major must be at least 2 characters"),
         })
         .optional(),
     })
