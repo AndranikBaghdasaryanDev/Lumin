@@ -68,7 +68,7 @@ class AuthController {
         )
       }
 
-      const response = await api.post<ApiResponse<{ accessToken: string, refershToken: string }>>("/auth/refresh-token", { refreshToken })
+      const response = await api.post<ApiResponse<{ accessToken: string, refreshToken: string }>>("/auth/refresh", { refreshToken })
       if(!response.data.success) {
         return errorResponse(
           res,
