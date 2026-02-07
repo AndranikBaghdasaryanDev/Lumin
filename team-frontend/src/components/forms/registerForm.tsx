@@ -22,14 +22,13 @@ export const RegisterForm = () => {
         mode: "onChange"
     })
 
-    const {isLoading}:any = useAuthStore();
+    const {isLoading, register: registerUser}:any = useAuthStore();
     const [error, setError] = useState({ status: false, message: "" });
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
     const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
 
     const handleSave = (data: RegisterFormValues) => {
-        console.log("Register Data:", data);
-        reset();
+        registerUser(data)
     }
 
     return (

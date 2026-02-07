@@ -32,7 +32,7 @@ export const LoginForm = () => {
     
     const navigate = useNavigate();
     const handleSave = (data: LoginFormValues) => {
-        login(data);
+        login(data.email, data.password);
         reset();
         navigate("/dashboard");
     }

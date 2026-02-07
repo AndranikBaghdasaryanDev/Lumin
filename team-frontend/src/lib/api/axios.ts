@@ -29,7 +29,15 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
-        useAuthStore.getState().logout()
+        const store = useAuthStore.getState();
+        const api = useAuthStore;
+        api.setState({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+          isLoading: false
+        });
       }
 
       if (status >= 500) {

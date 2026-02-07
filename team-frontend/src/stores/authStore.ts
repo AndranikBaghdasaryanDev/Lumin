@@ -14,21 +14,24 @@ export const useAuthStore = create<AuthState>()(
             isLoading:false,
             isAuthenticated:false,
             hasHydrated:false,
+
             login: (email:string,password:string) => {
                 set({isLoading:true});
                 authService.login(email,password)
                 .then((response) => {
+                    console.log("Login successful:", response.data);
                     set(
                         {   
-                            user:response.user,
-                            accessToken:response.accessToken,
-                            refreshToken:response.refreshToken,
+                            user:response.data.user,
+                            accessToken:response.data.accessToken,
+                            refreshToken:response.data.refreshToken,
                             isLoading:false,
                             isAuthenticated:true
                         }
                     )
                 })
                 .catch((error) => {
+                    console.log("Login failed:", error.response.data);
                     set({isLoading:false});
                     throw error;
                 })
@@ -45,17 +48,24 @@ export const useAuthStore = create<AuthState>()(
                 })
             },
             register: async (userData:User) => {
+                console.log()
                 set({isLoading:true});
-                let response = await authService.register(userData);
-                set(
-                    {   
-                        user:response.user,
-                        accessToken:response.accessToken,
-                        refreshToken:response.refreshToken,
+                authService.register(userData)
+                .then((response) => {
+                    console.log("Registration successful:", response.data);
+                    set({   
+                        user:response.data.user,
+                        accessToken:response.data.accessToken,
+                        refreshToken:response.data.refreshToken,
                         isLoading:false,
                         isAuthenticated:true
-                    }
-                )
+                    })
+                })
+                .catch(error => {
+                    console.log("Registration failed:", error.response.data);
+                    set({isLoading:false});
+                    throw error;
+                })
             },
             setAuth: async (user:User,accessToken:string,refreshToken:string) => {
                 set(
