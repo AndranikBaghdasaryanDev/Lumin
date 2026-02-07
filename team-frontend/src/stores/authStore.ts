@@ -14,35 +14,40 @@ export const useAuthStore = create<AuthState>()(
             isLoading:false,
             isAuthenticated:false,
             hasHydrated:false,
-            login: (email:string,password:string) => {
+            login: async (email:string,password:string) => {
                 set({isLoading:true});
-                authService.login(email,password)
-                .then((response) => {
-                    set(
-                        {   
-                            user:response.user,
-                            accessToken:response.accessToken,
-                            refreshToken:response.refreshToken,
-                            isLoading:false,
-                            isAuthenticated:true
-                        }
-                    )
-                })
-                .catch((error) => {
-                    set({isLoading:false});
-                    throw error;
-                })
+                
+                try {
+                    const response = await authService.login(email, password);
+                    set({
+                        user: response.user,
+                        accessToken: response.accessToken,
+                        refreshToken: response.refreshToken,
+                        isLoading: false,
+                        isAuthenticated: true
+                    }); 
+                } catch (err) {
+                    set({isLoading: false});
+                    throw err;
+                }
             },
-            logout: () => {
+            logout: async () => {
                 set({isLoading:true});
-                authService.logout()
-                .then(() => {
-                    set({user:null,accessToken:null,refreshToken:null,isLoading:false,isAuthenticated:false});
-                })
-                .catch(error => {
-                    set({isLoading:false});
-                    throw error;
-                })
+                
+                try {
+                    await authService.logout();
+                    set({
+                        user:null, 
+                        accessToken:null,
+                        refreshToken:null,
+                        isLoading:false,
+                        isAuthenticated:false
+                    });
+
+                } catch (err) {
+                    set({isLoading: false});
+                    throw err;
+                }
             },
             register: async (userData:User) => {
                 set({isLoading:true});
