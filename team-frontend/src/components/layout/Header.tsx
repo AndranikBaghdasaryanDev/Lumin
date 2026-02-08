@@ -5,8 +5,9 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { LogoLumin } from "../reusable/logoLumin";
 
 export const Header = () => {
-  const { logout }: any = useAuthStore();
-  const location = useLocation();
+  const logout = useAuthStore(state => state.logout);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+
   const navigate = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -18,8 +19,7 @@ export const Header = () => {
         <div 
           className="flex items-center gap-3 cursor-pointer group"
           onClick={() => {
-            if (location.pathname === "/") navigate("/login");
-            if (location.pathname === "/dashboard") navigate("/dashboard");
+            navigate(isAuthenticated ? "/dashboard" : "/login");
           }}
         >
           <LogoLumin/>
@@ -28,7 +28,7 @@ export const Header = () => {
 
         {/* Desktop Menu - Logic Unchanged */}
         <div className="hidden md:flex items-center gap-2">
-          {location.pathname === "/dashboard" ? (
+          {isAuthenticated ? (
             <button
               className="bg-red-50/80 hover:bg-red-100 text-red-600 font-semibold py-2.5 px-6 rounded-xl transition-all duration-200 active:scale-95 border border-red-100/60 shadow-sm hover:shadow-md"
               onClick={() => logout()}
@@ -67,7 +67,7 @@ export const Header = () => {
       {/* Mobile Menu - Logic Unchanged */}
       {mobileMenu && (
         <div className="md:hidden flex flex-col gap-3 px-8 pb-8 pt-4 bg-white/95 backdrop-blur-lg border-b border-gray-100/80 animate-fadeIn shadow-lg">
-          {location.pathname === "/dashboard" ? (
+          {isAuthenticated ? (
             <>
               {/* Home button removed - only burger menu toggle remains */}
             </>
