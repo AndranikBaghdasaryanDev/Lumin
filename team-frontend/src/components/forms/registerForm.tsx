@@ -13,6 +13,7 @@ import { Divider } from "../reusable/divider";
 import { Loading } from "../ui/Loading.tsx";
 import { useAuthStore } from "../../stores/authStore";
 import { LogoLumin } from "../reusable/logoLumin";
+import { Button } from "../ui/Button.tsx";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -88,7 +89,7 @@ export const RegisterForm = () => {
                                 type="email"
                                 label="Email"
                                 placeholder="Enter your email"
-error={errors.email?.message || ""}
+                                error={errors.email?.message || ""}
                                 {...register("email")}
                             />
                         </div>
@@ -163,14 +164,18 @@ error={errors.email?.message || ""}
                         />
 
                         {/* Submit */}
-                        <button
+                        <Button
                             type="submit"
+                            variant="primary"
+                            size="lg"
+                            loading={isLoading}
                             disabled={Object.keys(errors).length > 0}
-                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
-                        >
+                            className="w-full mt-4 h-12 rounded-2xl"
+                            >
                             Register
-                        </button>
-</form>
+                        </Button>
+
+                    </form>
                 </div>
             </main>
 
