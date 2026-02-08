@@ -25,7 +25,7 @@ export const RegisterForm = () => {
     })
 
     const { isLoading, register: authRegister }:any = useAuthStore();
-    const toast = useToastStore();
+    const { success: toastSuccess, error: toastError }: any = useToastStore();
     const navigate = useNavigate();
     const [error, setError] = useState({ status: false, message: "" });
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
@@ -42,11 +42,11 @@ export const RegisterForm = () => {
                 password
             });
 
-            toast.success("Account created!");
+            toastSuccess("Account created!");
             reset();
             navigate('/dashboard');
         } catch (error) {
-            toast.error("Registration failed");
+            toastError("Registration failed");
         };
     };
 
