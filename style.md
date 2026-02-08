@@ -1,3 +1,5 @@
+header
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useState } from "react";
@@ -100,7 +102,72 @@ export const Header = () => {
 };
 
 
+
+footer
+
+
+
+import { Link } from "react-router-dom";
+import { LogoLumin } from "../reusable/logoLumin";
+
+export const Footer = () => {
+  return (
+    <footer className="w-full bg-white border-t border-gray-100/80 mt-auto">
+      <div className="max-w-7xl mx-auto px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          
+          {/* Brand Column */}
+          <div className="col-span-1 md:col-span-1">
+            <div className="flex items-center gap-3 mb-6">
+               <LogoLumin/>
+               <span className="font-bold text-gray-900 tracking-tight text-lg">Lumin</span>
+            </div>
+            <p className="text-gray-500 text-sm leading-relaxed">
+              The next generation platform for lightning-fast digital solutions.
+            </p>
+          </div>
+
+          {/* Links Columns */}
+          <div className="flex flex-col gap-4">
+            <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider">Product</h4>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">Features</Link>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">API Reference</Link>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider">Support</h4>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">Help Center</Link>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">Community</Link>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider">Legal</h4>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">Privacy Policy</Link>
+            <Link to="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-200">Terms of Service</Link>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-xs text-gray-400 font-medium uppercase tracking-tighter">
+            © {new Date().getFullYear()} Lumin Inc. All rights reserved.
+          </p>
+          <div className="flex gap-8">
+            <div className="w-6 h-6 bg-gray-100 rounded-full hover:bg-blue-100 cursor-pointer transition-all duration-200 hover:scale-110" />
+            <div className="w-6 h-6 bg-gray-100 rounded-full hover:bg-blue-100 cursor-pointer transition-all duration-200 hover:scale-110" />
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+
+
+
 dashboard
+
+
 import { LogoLumin } from "../components/reusable/logoLumin";
 import { useState } from "react";
 
@@ -373,4 +440,557 @@ export function DashBoard() {
                 </section>
 
                 {/* Settings Section */}
- 
+                <section className="p-4 sm:p-6 lg:p-12 max-w-7xl">
+                    <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-6 lg:mb-8">Settings</h3>
+                    <div className="bg-white rounded-2xl lg:rounded-3xl border border-slate-100/80 shadow-xl p-4 sm:p-6 lg:p-8">
+                        <div className="space-y-6 lg:space-y-8">
+                            <div>
+                                <h4 className="font-bold text-base lg:text-lg text-slate-800 mb-3 lg:mb-4">Account Settings</h4>
+                                <div className="space-y-3 lg:space-y-4">
+                                    <div className="flex items-center justify-between p-3 lg:p-4 bg-slate-50 rounded-xl">
+                                        <div>
+                                            <p className="font-semibold text-slate-900 text-sm sm:text-base">Email Notifications</p>
+                                            <p className="text-xs sm:text-sm text-slate-600">Receive email updates about your account</p>
+                                        </div>
+                                        <button className="w-10 h-5 lg:w-12 lg:h-6 bg-blue-600 rounded-full relative transition-colors">
+                                            <div className="absolute right-0.5 lg:right-1 top-0.5 lg:top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 lg:p-4 bg-slate-50 rounded-xl">
+                                        <div>
+                                            <p className="font-semibold text-slate-900 text-sm sm:text-base">Two-Factor Authentication</p>
+                                            <p className="text-xs sm:text-sm text-slate-600">Add an extra layer of security</p>
+                                        </div>
+                                        <button className="w-10 h-5 lg:w-12 lg:h-6 bg-slate-300 rounded-full relative transition-colors">
+                                            <div className="absolute left-0.5 lg:left-1 top-0.5 lg:top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 className="font-bold text-base lg:text-lg text-slate-800 mb-3 lg:mb-4">Preferences</h4>
+                                <div className="space-y-3 lg:space-y-4">
+                                    <div className="p-3 lg:p-4 bg-slate-50 rounded-xl">
+                                        <p className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Language</p>
+                                        <select className="w-full p-2 lg:p-3 border border-slate-200 rounded-xl bg-white text-sm sm:text-base">
+                                            <option>English</option>
+                                            <option>Spanish</option>
+                                            <option>French</option>
+                                        </select>
+                                    </div>
+                                    <div className="p-3 lg:p-4 bg-slate-50 rounded-xl">
+                                        <p className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Timezone</p>
+                                        <select className="w-full p-2 lg:p-3 border border-slate-200 rounded-xl bg-white text-sm sm:text-base">
+                                            <option>UTC-5 (Eastern)</option>
+                                            <option>UTC-6 (Central)</option>
+                                            <option>UTC-7 (Mountain)</option>
+                                            <option>UTC-8 (Pacific)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    );
+}
+
+
+loading form
+
+
+import { useForm } from "react-hook-form";
+import { loginSchema } from "../../lib/validations/auth";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Error } from "../ui/Error";
+import { useState } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
+import { Loading } from "../ui/Loading.tsx";
+import { Input } from "../reusable/input";
+import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
+import { LinkSocial } from "../reusable/linkSocial";
+import { TermsPolicy } from "../reusable/termsPolicy";
+import { Divider } from "../reusable/divider";
+import { LogoLumin } from "../reusable/logoLumin";
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+
+export const LoginForm = () => {
+    const { isLoading, login }: any = useAuthStore()
+    const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
+    const [error,setError] = useState({ status: false, message: "" });
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    })
+    
+    const navigate = useNavigate();
+    const handleSave = (data: LoginFormValues) => {
+        login(data.email, data.password);
+        reset();
+        navigate("/dashboard");
+    }
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
+
+            {/* ===== CENTER ===== */}
+            <main className="flex-1 flex items-center justify-center px-4">
+                <div className="w-full max-w-sm sm:max-w-md bg-white rounded-3xl shadow-2xl px-8 sm:px-10 py-12 border border-gray-100/50">
+
+                    {/* Logo */}
+                    <div className="flex justify-center mb-8">
+                        <LogoLumin/>
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-3">
+                        Welcome back to Lumin
+                    </h1>
+                    <p className="text-center text-gray-500 text-base mb-10">
+                        Login with your email and password
+                    </p>
+
+                    {/* ===== YOUR FORM (LOGIC UNTOUCHED) ===== */}
+                    <form
+                        onSubmit={handleSubmit(handleSave)}
+                        className="space-y-6"
+                    >
+                        {error.status && <Error message={error.message || "Error"} />}
+                        {isLoading && <Loading />}
+
+                        {/* Email */}
+                        <div>
+                            {errors.email && <Error message={errors.email.message} />}
+                            <Input
+                                type="email"
+                                label="Email"
+                                placeholder="Enter your email"
+                                error={errors.email?.message || ""}
+                                {...register("email")}
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div >
+                            {errors.password && <Error message={errors.password.message} />}
+                            <Input
+                                type={togglePasswordVisibility ? "text" : "password"}
+                                label="Password"
+                                placeholder="Enter your password"
+                                {...register("password")}
+                                error={errors.password?.message || ""}
+                            />
+                            <div className="relative">
+                                <ButtonToggleVisibility
+                                    type="button"
+                                    onClick={() => setTogglePasswordVisibility(!togglePasswordVisibility)}
+                                    src={togglePasswordVisibility ? "hide" : "show"}
+
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* Remember + Register */}
+
+                        <div className="flex items-center justify-between text-sm">
+                            <label className="flex items-center gap-3 text-gray-600 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span className="font-medium">Keep me signed in</span>
+                            </label>
+
+                            <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                                Register
+                            </Link>
+                        </div>
+
+                        {/* Divider */}
+                        <Divider/>
+
+                        {/* Social */}
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            text="Continue with Google"
+                        />
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+                            text="Continue with Facebook"
+                        />
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={Object.keys(errors).length > 0}
+                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
+                        >
+                            Login
+                        </button>
+                    </form>
+                </div>
+            </main>
+
+            {/* ===== FOOTER ===== */}
+            <footer className="text-xs text-gray-400 text-center py-6 px-4">
+                <TermsPolicy />
+            </footer>
+        </div>
+
+    )
+}
+
+
+Register form 
+
+
+import type z from "zod";
+import { registerSchema } from "../../lib/validations/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod/src/index.js";
+import { Error } from "../ui/Error";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Input } from "../reusable/input";
+import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
+import { LinkSocial } from "../reusable/linkSocial";
+import { TermsPolicy } from "../reusable/termsPolicy";
+import { Divider } from "../reusable/divider";
+import { Loading } from "../ui/Loading.tsx";
+import { useAuthStore } from "../../stores/authStore";
+import { LogoLumin } from "../reusable/logoLumin";
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const RegisterForm = () => {
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
+        mode: "onChange"
+    })
+
+    const {isLoading, register: registerUser}:any = useAuthStore();
+    const [error, setError] = useState({ status: false, message: "" });
+    const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
+    const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
+
+    const handleSave = (data: RegisterFormValues) => {
+        registerUser(data)
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
+
+            {/* ===== CENTER ===== */}
+            <main className="flex-1 flex items-center justify-center px-4">
+                <div className="w-full max-w-sm sm:max-w-md bg-white rounded-3xl shadow-2xl px-8 sm:px-10 py-12 border border-gray-100/50">
+
+                    {/* Logo */}
+                    <div className="flex justify-center mb-8">
+                        <LogoLumin/>
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-3">
+                        Create your Lumin account
+                    </h1>
+                    <p className="text-center text-gray-500 text-base mb-10">
+                        Sign up with your email and password
+                    </p>
+
+                    {/* ===== REGISTER FORM ===== */}
+                    <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
+                        {error.status && <Error message={error.message || "Error"} />}
+                        {isLoading && <Loading />}
+
+                        {/* First Name */}
+                        <div>
+                            {errors.firstName && <Error message={errors.firstName.message} />}
+                            <Input
+                                type="text"
+                                label="First Name"
+                                placeholder="Enter your first name"
+                                error={errors.firstName?.message || ""}
+                                {...register("firstName")}
+                            />
+                        </div>
+
+                        {/* Last Name */}
+                        <div>
+                            {errors.lastName && <Error message={errors.lastName.message} />}
+                            <Input
+                                type="text"
+                                label="Last Name"
+                                placeholder="Enter your last name"
+                                error={errors.lastName?.message || ""}
+                                {...register("lastName")}
+                            />
+                        </div>
+
+                        {/* Email */}
+                        <div>
+                            {errors.email && <Error message={errors.email.message} />}
+                            <Input
+                                type="email"
+                                label="Email"
+                                placeholder="Enter your email"
+error={errors.email?.message || ""}
+                                {...register("email")}
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            {errors.password && <Error message={errors.password.message} />}
+                            <Input
+                                type={togglePasswordVisibility ? "text" : "password"}
+                                label="Password"
+                                placeholder="Enter your password"
+                                error={errors.password?.message || ""}
+                                {...register("password")}
+                            />
+                            <div className="relative">
+                                <ButtonToggleVisibility
+                                    type="button"
+                                    onClick={() => setTogglePasswordVisibility(!togglePasswordVisibility)}
+                                    src={togglePasswordVisibility ? "hide" : "show"}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Confirm Password */}
+                        <div>
+                            {errors.confirmPassword && <Error message={errors.confirmPassword.message} />}
+                            <Input
+                                type={toggleConfirmPasswordVisibility ? "text" : "password"}
+                                label="Confirm Password"
+                                placeholder="Confirm your password"
+                                error={errors.confirmPassword?.message || ""}
+                                {...register("confirmPassword")}
+                            />
+                            <div className="relative">
+                                <ButtonToggleVisibility
+                                    type="button"
+                                    onClick={() => setToggleConfirmPasswordVisibility(!toggleConfirmPasswordVisibility)}
+                                    src={toggleConfirmPasswordVisibility ? "hide" : "show"}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Terms + Login */}
+                        <div className="flex items-center justify-between text-sm">
+                            <label className="flex items-center gap-3 text-gray-600 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span className="font-medium">I agree to terms</span>
+                            </label>
+
+                            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                                Login
+                            </Link>
+                        </div>
+
+                        {/* Divider */}
+                        <Divider />
+
+                        {/* Social */}
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            text="Continue with Google"
+                        />
+                        <LinkSocial 
+                            type="button"
+                            to="#"
+                            disabled={true}
+                            src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+                            text="Continue with Facebook"
+                        />
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={Object.keys(errors).length > 0}
+                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
+                        >
+                            Register
+                        </button>
+</form>
+                </div>
+            </main>
+
+            {/* ===== FOOTER ===== */}
+            <footer className="text-xs text-gray-400 text-center py-6 px-4">
+                <TermsPolicy />
+            </footer>
+        </div>
+    )
+}
+
+
+
+
+
+Auth store 
+
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { authService } from "../lib/api/service/authService";
+import type { AuthState } from "../types/auth";
+import type { User } from "../types/user";
+
+
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set) => ({
+            user:null,
+            accessToken:null,
+            refreshToken:null,
+            isLoading:false,
+            isAuthenticated:false,
+            hasHydrated:false,
+
+            login: (email:string,password:string) => {
+                set({isLoading:true});
+                authService.login(email,password)
+                .then((response) => {
+                    console.log("Login successful:", response.data);
+                    set(
+                        {   
+                            user:response.data.user,
+                            accessToken:response.data.accessToken,
+                            refreshToken:response.data.refreshToken,
+                            isLoading:false,
+                            isAuthenticated:true
+                        }
+                    )
+                })
+                .catch((error) => {
+                    console.log("Login failed:", error.response.data);
+                    set({isLoading:false});
+                    throw error;
+                })
+            },
+            logout: () => {
+                set({isLoading:true});
+                authService.logout()
+                .then(() => {
+                    set({user:null,accessToken:null,refreshToken:null,isLoading:false,isAuthenticated:false});
+                })
+                .catch(error => {
+                    set({isLoading:false});
+                    throw error;
+                })
+            },
+            register: async (userData:User) => {
+                console.log()
+                set({isLoading:true});
+                authService.register(userData)
+                .then((response) => {
+                    console.log("Registration successful:", response.data);
+                    set({   
+                        user:response.data.user,
+                        accessToken:response.data.accessToken,
+                        refreshToken:response.data.refreshToken,
+                        isLoading:false,
+                        isAuthenticated:true
+                    })
+                })
+                .catch(error => {
+                    console.log("Registration failed:", error.response.data);
+                    set({isLoading:false});
+                    throw error;
+                })
+            },
+            setAuth: async (user:User,accessToken:string,refreshToken:string) => {
+                set(
+                    {
+                        user:user,
+                        accessToken:accessToken,
+                        refreshToken:refreshToken,
+                        isLoading:false,
+                        isAuthenticated:true
+                    }
+                )
+            },
+            checkAuth: () => {
+                set({isLoading:true});
+                authService.checkAuth()
+                .then(() => {
+                    set({
+                        isAuthenticated:true,
+                    })
+                })
+                .catch(() => {
+                    set({
+                        isAuthenticated:false,
+                    })          
+                })
+                .finally(() => {
+                    set({isLoading:false});
+                })
+            },
+            setHasHydrated: (state: boolean) => {
+                set({ hasHydrated: state });
+            },
+        }),
+        {
+            name:"auth-storage",
+            onRehydrateStorage: () => (state: any) => {
+                state?.setHasHydrated(true);
+            }
+        }
+    )
+)
+
+
+
+
+
+.env
+
+
+PORT=4000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+CORE_BACKEND_URL=https://api-core.picsartacademy.am/api/internal
+INTERNAL_API_KEY=36pMAcHMEmJHcezb12KeEU896FSUbWXWp7YZP7F8RBw=
+JWT_SECRET=5b8BMLb8w1W3mGr1CDSDoWQIxDuckGsPQ99PmU77sOI=
+
+
+
+authservice
+
+
+import type { User } from "../../../types/user";
+import { Axios } from "../axios";
+
+export const authService = {
+    login: async (email: string, password: string) => {
+        return Axios.post("/api/auth/login", { email, password });
+    },
+    register: async (userData: User) => {
+        return Axios.post("/api/auth/register", userData);
+    },
+    logout: () => {
+        return Axios.post("/api/auth/logout");
+    },
+    checkAuth: () => {
+        return Axios.get("/api/auth/me");
+    }
+}
