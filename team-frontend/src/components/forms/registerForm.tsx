@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod/src/index.js";
 import { Error } from "../ui/Error";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../reusable/input";
 import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
 import { LinkSocial } from "../reusable/linkSocial";
@@ -14,6 +14,7 @@ import { Loading } from "../ui/Loading.tsx";
 import { useAuthStore } from "../../stores/authStore";
 import { LogoLumin } from "../reusable/logoLumin";
 import { Button } from "../ui/Button.tsx";
+import { useToastStore } from "../../stores/toastStore.ts";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -23,15 +24,31 @@ export const RegisterForm = () => {
         mode: "onChange"
     })
 
-    const {isLoading}:any = useAuthStore();
+    const { isLoading, register: authRegister }:any = useAuthStore();
+    const toast = useToastStore();
+    const navigate = useNavigate();
     const [error, setError] = useState({ status: false, message: "" });
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
     const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
 
-    const handleSave = (data: RegisterFormValues) => {
-        console.log("Register Data:", data);
-        reset();
-    }
+    const handleSave = async (data: RegisterFormValues) => {
+        const { firstName, lastName, email, password } = data;
+        
+        try {
+            await authRegister({
+                firstName,
+                lastName,
+                email,
+                password
+            });
+
+            toast.success("Account created!");
+            reset();
+            navigate('/dashboard');
+        } catch (error) {
+            toast.error("Registration failed");
+        };
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
