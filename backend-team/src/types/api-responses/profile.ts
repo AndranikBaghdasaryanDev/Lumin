@@ -3,16 +3,19 @@ export interface UserProfile {
   email: string;
   firstName: string;
   lastName: string;
+  role: string;
   profileImage: string;
   phone: string;
   dateOfBirth: string;
   studentProfile: StudentProfile | null;
+  instructorProfile: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface StudentProfile {
-  jobTitle: string;
-  learningGoal: string;
-  learningInterests: string[];
-  currentStreak: number;
-  totalPoints: number;
+  id: string;
+  userId: string;
+  age: number;
+  major: string;
 }

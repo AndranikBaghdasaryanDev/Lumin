@@ -14,6 +14,8 @@ import { LinkSocial } from "../reusable/linkSocial";
 import { TermsPolicy } from "../reusable/termsPolicy";
 import { Divider } from "../reusable/divider";
 import { LogoLumin } from "../reusable/logoLumin";
+import { useToastStore } from "../../stores/toastStore.ts";
+import { Button } from "../ui/Button.tsx";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 
@@ -29,12 +31,18 @@ export const LoginForm = () => {
             password: ""
         }
     })
+    const {success: toastSuccess, error: toastError} = useToastStore();
     
     const navigate = useNavigate();
-    const handleSave = (data: LoginFormValues) => {
-        login(data.email, data.password);
-        reset();
-        navigate("/dashboard");
+    const handleSave = async (data: LoginFormValues) => {
+        try{
+            await login(data.email, data.password);
+            toastSuccess("Logged in successfully");
+            reset();
+            navigate("/dashboard");
+        }catch(error: any) {
+            toastError(error.message || "Login failed");
+        }
     }
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
@@ -129,13 +137,17 @@ export const LoginForm = () => {
                             text="Continue with Facebook"
                         />
                         {/* Submit */}
-                        <button
+                        <Button
                             type="submit"
+                            variant="primary"
+                            size="lg"
+                            loading={isLoading}
                             disabled={Object.keys(errors).length > 0}
-                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
-                        >
+                            className="w-full mt-4 h-12 rounded-2xl"
+                            >
                             Login
-                        </button>
+                        </Button>
+
                     </form>
                 </div>
             </main>
