@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod/src/index.js";
 import { Error } from "../ui/Error";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../reusable/input";
 import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
 import { LinkSocial } from "../reusable/linkSocial";
@@ -13,6 +13,8 @@ import { Divider } from "../reusable/divider";
 import { Loading } from "../ui/Loading.tsx";
 import { useAuthStore } from "../../stores/authStore";
 import { LogoLumin } from "../reusable/logoLumin";
+import { Button } from "../ui/Button.tsx";
+import { useToastStore } from "../../stores/toastStore.ts";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -22,15 +24,31 @@ export const RegisterForm = () => {
         mode: "onChange"
     })
 
-    const {isLoading}:any = useAuthStore();
+    const { isLoading, register: authRegister }:any = useAuthStore();
+    const { success: toastSuccess, error: toastError }: any = useToastStore();
+    const navigate = useNavigate();
     const [error, setError] = useState({ status: false, message: "" });
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
     const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
 
-    const handleSave = (data: RegisterFormValues) => {
-        console.log("Register Data:", data);
-        reset();
-    }
+    const handleSave = async (data: RegisterFormValues) => {
+        const { firstName, lastName, email, password } = data;
+        
+        try {
+            await authRegister({
+                firstName,
+                lastName,
+                email,
+                password
+            });
+
+            toastSuccess("Account created!");
+            reset();
+            navigate('/dashboard');
+        } catch (error) {
+            toastError("Registration failed");
+        };
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
@@ -88,7 +106,7 @@ export const RegisterForm = () => {
                                 type="email"
                                 label="Email"
                                 placeholder="Enter your email"
-error={errors.email?.message || ""}
+                                error={errors.email?.message || ""}
                                 {...register("email")}
                             />
                         </div>
@@ -163,14 +181,18 @@ error={errors.email?.message || ""}
                         />
 
                         {/* Submit */}
-                        <button
+                        <Button
                             type="submit"
+                            variant="primary"
+                            size="lg"
+                            loading={isLoading}
                             disabled={Object.keys(errors).length > 0}
-                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
-                        >
+                            className="w-full mt-4 h-12 rounded-2xl"
+                            >
                             Register
-                        </button>
-</form>
+                        </Button>
+
+                    </form>
                 </div>
             </main>
 
