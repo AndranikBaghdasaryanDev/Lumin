@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>()(
                 set({isLoading: true});
                 try {
                     const response = await authService.login(email, password);
-                    const { user, accessToken, refreshToken } = response;
+                    const { user, accessToken, refreshToken } = response.data;
                     set({
                         user,
                         accessToken,
@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>()(
                 set({isLoading: true});
                 try {
                     const response = await authService.register(userData);
-                    const { user, accessToken, refreshToken } = response;
+                    const { user, accessToken, refreshToken } = response.data;
                     set({
                         user,
                         accessToken,
