@@ -14,54 +14,55 @@ export const useAuthStore = create<AuthState>()(
             isLoading:false,
             isAuthenticated:false,
             hasHydrated:false,
-            login: async (email:string,password:string) => {
-                try{
-                    set({isLoading:true});
-                    const response = await authService.login(email,password);
-                    set(
-                        {   
-                            user:response.user,
-                            accessToken:response.accessToken,
-                            refreshToken:response.refreshToken,
-                            isLoading:false,
-                            isAuthenticated:true
-                        }
-                    );
-                }catch(error){
-                    set({isLoading:false});
+            login: async (email: string, password: string) => {
+                set({isLoading: true});
+                try {
+                    const response = await authService.login(email, password);
+                    const { user, accessToken, refreshToken } = response;
+                    set({
+                        user,
+                        accessToken,
+                        refreshToken,
+                        isLoading: false,
+                        isAuthenticated: true
+                    });
+                } catch (error: any) {
+                    set({isLoading: false});
                     throw error;
                 }
             },
             logout: async () => {
-                set({isLoading:true});
-                
+                set({isLoading: true});
                 try {
                     await authService.logout();
                     set({
-                        user:null, 
-                        accessToken:null,
-                        refreshToken:null,
-                        isLoading:false,
-                        isAuthenticated:false
+                        user: null,
+                        accessToken: null,
+                        refreshToken: null,
+                        isLoading: false,
+                        isAuthenticated: false
                     });
-
                 } catch (err) {
                     set({isLoading: false});
                     throw err;
                 }
             },
-            register: async (userData:User) => {
-                set({isLoading:true});
-                let response = await authService.register(userData);
-                set(
-                    {   
-                        user:response.user,
-                        accessToken:response.accessToken,
-                        refreshToken:response.refreshToken,
-                        isLoading:false,
-                        isAuthenticated:true
-                    }
-                )
+            register: async (userData: User) => {
+                set({isLoading: true});
+                try {
+                    const response = await authService.register(userData);
+                    const { user, accessToken, refreshToken } = response;
+                    set({
+                        user,
+                        accessToken,
+                        refreshToken,
+                        isLoading: false,
+                        isAuthenticated: true
+                    });
+                } catch (error: any) {
+                    set({isLoading: false});
+                    throw error;
+                }
             },
             setAuth: async (user:User,accessToken:string,refreshToken:string) => {
                 set(
@@ -74,22 +75,22 @@ export const useAuthStore = create<AuthState>()(
                     }
                 )
             },
-            checkAuth: () => {
-                set({isLoading:true});
-                authService.checkAuth()
-                .then(() => {
+            checkAuth: async () => {
+                set({isLoading: true});
+                try {
+                    const response = await authService.checkAuth();
                     set({
-                        isAuthenticated:true,
-                    })
-                })
-                .catch(() => {
+                        user: response.data.user,
+                        isAuthenticated: true,
+                        isLoading: false
+                    });
+                } catch (error) {
                     set({
-                        isAuthenticated:false,
-                    })          
-                })
-                .finally(() => {
-                    set({isLoading:false});
-                })
+                        user: null,
+                        isAuthenticated: false,
+                        isLoading: false
+                    });
+                }
             },
             setHasHydrated: (state: boolean) => {
                 set({ hasHydrated: state });

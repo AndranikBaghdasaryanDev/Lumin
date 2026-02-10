@@ -3,9 +3,8 @@ import { Layout } from "../layout";
 import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 import { Register } from "../pages/register";
-import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
-
 
 export const router = createBrowserRouter([
   {
