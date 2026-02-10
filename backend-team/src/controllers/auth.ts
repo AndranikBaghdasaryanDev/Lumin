@@ -25,9 +25,7 @@ class AuthController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout", {}, { 
-        headers: { Authorization: `Bearer ${req.token}` }
-       });
+      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout");
 
       if (response.data.success) {
         return successResponse(res, response.data.data);
@@ -68,7 +66,7 @@ class AuthController {
         )
       }
 
-      const response = await api.post<ApiResponse<{ accessToken: string, refreshToken: string }>>("/auth/refresh-token", { refreshToken })
+      const response = await api.post<ApiResponse<{ accessToken: string, refershToken: string }>>("/auth/refresh", { refreshToken })
       if(!response.data.success) {
         return errorResponse(
           res,
@@ -86,7 +84,22 @@ class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
+      if(!req.body) {
+        return errorResponse(
+          res,
+          "REQUEST_BODY_MISSING",
+          "Request body is required"
+        )
+      }
       const { email, password } = req.body
+      if(!email || !password) {
+        return errorResponse(
+          res,
+          "MISSING_CREDENTIALS",
+          "Email and Password is required"
+        )
+      }
+
       const response = await api.post<ApiResponse<Login>>('/auth/login', { email, password })
       if(!response.data.success) {
         return errorResponse(

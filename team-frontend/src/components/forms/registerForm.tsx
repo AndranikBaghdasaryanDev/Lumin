@@ -1,20 +1,19 @@
 import type z from "zod";
 import { registerSchema } from "../../lib/validations/auth";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod/src/index.js";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../ui/Error";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../reusable/input";
 import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
 import { LinkSocial } from "../reusable/linkSocial";
-import { TermsPolicy } from "../reusable/termsPolicy";
 import { Divider } from "../reusable/divider";
 import { Loading } from "../ui/Loading.tsx";
 import { useAuthStore } from "../../stores/authStore";
 import { LogoLumin } from "../reusable/logoLumin";
 import { Button } from "../ui/Button.tsx";
-import { useToastStore } from "../../stores/toastStore.ts";
+import toast from 'react-hot-toast';
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -22,32 +21,29 @@ export const RegisterForm = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
         mode: "onChange"
-    })
+    });
 
-    const { isLoading, register: authRegister }:any = useAuthStore();
-    const { success: toastSuccess, error: toastError }: any = useToastStore();
+    const { isLoading, register: authRegister } = useAuthStore();
     const navigate = useNavigate();
-    const [error, setError] = useState({ status: false, message: "" });
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
     const [toggleConfirmPasswordVisibility, setToggleConfirmPasswordVisibility] = useState(false);
 
     const handleSave = async (data: RegisterFormValues) => {
-        const { firstName, lastName, email, password } = data;
-        
         try {
             await authRegister({
-                firstName,
-                lastName,
-                email,
-                password
+                id: Date.now().toString(),
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password
             });
-
-            toastSuccess("Account created!");
+            toast.success('Account created successfully!');
             reset();
             navigate('/dashboard');
-        } catch (error) {
-            toastError("Registration failed");
-        };
+        } catch (error: any) {
+            console.error('Registration failed:', error);
+            toast.error(error.response?.data?.message || 'Registration failed');
+        }
     };
 
     return (
@@ -72,7 +68,6 @@ export const RegisterForm = () => {
 
                     {/* ===== REGISTER FORM ===== */}
                     <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
-                        {error.status && <Error message={error.message || "Error"} />}
                         {isLoading && <Loading />}
 
                         {/* First Name */}
@@ -198,7 +193,6 @@ export const RegisterForm = () => {
 
             {/* ===== FOOTER ===== */}
             <footer className="text-xs text-gray-400 text-center py-6 px-4">
-                <TermsPolicy />
             </footer>
         </div>
     )
