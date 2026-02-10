@@ -32,16 +32,23 @@ export const useAuthStore = create<AuthState>()(
                     throw error;
                 }
             },
-            logout: () => {
+            logout: async () => {
                 set({isLoading:true});
-                authService.logout()
-                .then(() => {
-                    set({user:null,accessToken:null,refreshToken:null,isLoading:false,isAuthenticated:false});
-                })
-                .catch(error => {
-                    set({isLoading:false});
-                    throw error;
-                })
+                
+                try {
+                    await authService.logout();
+                    set({
+                        user:null, 
+                        accessToken:null,
+                        refreshToken:null,
+                        isLoading:false,
+                        isAuthenticated:false
+                    });
+
+                } catch (err) {
+                    set({isLoading: false});
+                    throw err;
+                }
             },
             register: async (userData:User) => {
                 set({isLoading:true});
