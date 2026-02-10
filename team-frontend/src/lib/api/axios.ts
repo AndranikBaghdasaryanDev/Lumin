@@ -29,14 +29,12 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
-        const store = useAuthStore.getState();
-        const api = useAuthStore;
-        api.setState({
+        // Clear auth state directly without calling logout API to avoid loop
+        useAuthStore.setState({
           user: null,
           accessToken: null,
           refreshToken: null,
-          isAuthenticated: false,
-          isLoading: false
+          isAuthenticated: false
         });
       }
 

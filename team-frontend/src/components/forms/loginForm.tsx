@@ -4,25 +4,22 @@ import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../ui/Error";
 import { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { Loading } from "../ui/Loading.tsx";
 import { Input } from "../reusable/input";
 import { ButtonToggleVisibility } from "../reusable/buttonToggleVisibility";
 import { LinkSocial } from "../reusable/linkSocial";
-import { TermsPolicy } from "../reusable/termsPolicy";
 import { Divider } from "../reusable/divider";
 import { LogoLumin } from "../reusable/logoLumin";
-import { useToastStore } from "../../stores/toastStore.ts";
-import { Button } from "../ui/Button.tsx";
+import toast from 'react-hot-toast';
+
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 
 export const LoginForm = () => {
-    const { isLoading, login }: any = useAuthStore()
+    const { isLoading, login } = useAuthStore()
     const [togglePasswordVisibility, setTogglePasswordVisibility] = useState(false);
-    const [error,setError] = useState({ status: false, message: "" });
     const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
         mode: "onChange",
@@ -31,17 +28,18 @@ export const LoginForm = () => {
             password: ""
         }
     })
-    const {success: toastSuccess, error: toastError} = useToastStore();
     
     const navigate = useNavigate();
+    
     const handleSave = async (data: LoginFormValues) => {
-        try{
+        try {
             await login(data.email, data.password);
-            toastSuccess("Logged in successfully");
             reset();
+            toast.success('Login successful!');
             navigate("/dashboard");
-        }catch(error: any) {
-            toastError(error.message || "Login failed");
+        } catch (error: any) {
+            console.error('Login failed:', error);
+            toast.error(error.response?.data?.message || 'Login failed');
         }
     }
     return (
@@ -69,7 +67,6 @@ export const LoginForm = () => {
                         onSubmit={handleSubmit(handleSave)}
                         className="space-y-6"
                     >
-                        {error.status && <Error message={error.message || "Error"} />}
                         {isLoading && <Loading />}
 
                         {/* Email */}
@@ -137,24 +134,19 @@ export const LoginForm = () => {
                             text="Continue with Facebook"
                         />
                         {/* Submit */}
-                        <Button
+                        <button
                             type="submit"
-                            variant="primary"
-                            size="lg"
-                            loading={isLoading}
                             disabled={Object.keys(errors).length > 0}
-                            className="w-full mt-4 h-12 rounded-2xl"
-                            >
+                            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-200/60 active:scale-95"
+                        >
                             Login
-                        </Button>
-
+                        </button>
                     </form>
                 </div>
             </main>
 
             {/* ===== FOOTER ===== */}
             <footer className="text-xs text-gray-400 text-center py-6 px-4">
-                <TermsPolicy />
             </footer>
         </div>
 
