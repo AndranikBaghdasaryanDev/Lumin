@@ -1,11 +1,11 @@
-import type { User } from "../../../types/user";
+import type { RegisterData } from "../../../types/auth";
 import { Axios } from "../axios";
 
 export const authService = {
     login: async (email: string, password: string) => {
         return Axios.post("/api/auth/login", { email, password });
     },
-    register: async (userData: User) => {
+    register: async (userData: RegisterData) => {
         return Axios.post("/api/auth/register", userData);
     },
     logout: () => {

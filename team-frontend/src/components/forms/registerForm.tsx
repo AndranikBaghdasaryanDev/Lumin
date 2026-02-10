@@ -14,6 +14,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { LogoLumin } from "../reusable/logoLumin";
 import { Button } from "../ui/Button.tsx";
 import toast from 'react-hot-toast';
+import type { RegisterData } from "../../types/auth";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -30,13 +31,13 @@ export const RegisterForm = () => {
 
     const handleSave = async (data: RegisterFormValues) => {
         try {
-            await authRegister({
-                id: Date.now().toString(),
+            const registerData: RegisterData = {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
                 password: data.password
-            });
+            };
+            await authRegister(registerData);
             toast.success('Account created successfully!');
             reset();
             navigate('/dashboard');
