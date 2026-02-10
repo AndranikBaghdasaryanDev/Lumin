@@ -25,7 +25,11 @@ class AuthController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout");
+      const response = await api.post<ApiResponse<UserLogout>>("/auth/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${req.token}`
+        }
+      });
 
       if (response.data.success) {
         return successResponse(res, response.data.data);
@@ -37,8 +41,12 @@ class AuthController {
 
   async getCurrentUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const authHeader = req.headers.authorization
-      const response = await api.get<ApiResponse<CurrentUser>>("/auth/me", authHeader ? { headers: { Authorization: authHeader } } : {});
+      const response = await api.get<ApiResponse<CurrentUser>>("/auth/me", {
+        headers: {
+          Authorization: `Bearer ${req.token}`
+        }
+      });
+
       if (response.data.success) {
         return successResponse(res, response.data.data);
       } else {
@@ -66,7 +74,7 @@ class AuthController {
         )
       }
 
-      const response = await api.post<ApiResponse<{ accessToken: string, refershToken: string }>>("/auth/refresh", { refreshToken })
+      const response = await api.post<ApiResponse<{ accessToken: string, refreshToken: string }>>("/auth/refresh-token", { refreshToken })
       if(!response.data.success) {
         return errorResponse(
           res,
@@ -84,23 +92,10 @@ class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      if(!req.body) {
-        return errorResponse(
-          res,
-          "REQUEST_BODY_MISSING",
-          "Request body is required"
-        )
-      }
-      const { email, password } = req.body
-      if(!email || !password) {
-        return errorResponse(
-          res,
-          "MISSING_CREDENTIALS",
-          "Email and Password is required"
-        )
-      }
 
+      const { email, password } = req.body
       const response = await api.post<ApiResponse<Login>>('/auth/login', { email, password })
+
       if(!response.data.success) {
         return errorResponse(
           res,
