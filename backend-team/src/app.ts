@@ -8,6 +8,7 @@ import authRouter from "./routes/auth.ts";
 import profileRouter from "./routes/profile.ts";
 import { swaggerSpec, swaggerUiOptions } from "./config/swagger.ts";
 import swaggerUi from "swagger-ui-express";
+import courseRouter from "./routes/courses.ts";
 
 export const app = express();
 app.use(httpLogger);
@@ -32,4 +33,5 @@ app.get('/api-docs.json', (req, res) => {
 app.use("/api", healthRoute);
 app.use("/api", authRouter);
 app.use("/api", profileRouter);
+app.use("/api/courses", courseRouter);
 app.use(errorHandler);
