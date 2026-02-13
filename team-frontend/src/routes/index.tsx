@@ -5,6 +5,7 @@ import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
+import CategoriesPage from "../pages/Categories";
 
 export const router = createBrowserRouter([
   {
@@ -13,6 +14,13 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
+      { path: '/categories', 
+        element: (
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        )
+       },
       {
         path: "/dashboard",
         element: (
