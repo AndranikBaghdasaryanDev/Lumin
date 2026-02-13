@@ -5,6 +5,7 @@ import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
+import CoursesListingPage from "../pages/CourseListingPage";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { path: '/courses', element: <CoursesListingPage/> }
     ],
   },
 ]);
