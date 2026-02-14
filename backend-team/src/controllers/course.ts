@@ -17,7 +17,7 @@ class CourseController {
         );
       }
 
-      const response = await api.get(`/api/internal/courses/${id}`);
+      const response = await api.get(`/courses/${id}`);
 
       const course = response.data.data;
       const transformedCourse = transformCourse(course);
