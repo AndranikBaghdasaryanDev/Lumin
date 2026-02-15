@@ -1,5 +1,6 @@
 import { Axios } from "../axios";
-import type { CoursesData, CourseListItem } from "../../../types/course";
+import type { CoursesData } from "../../../types/course";
+import type { CourseDetailsResponse } from "../../../types/course.types";
 import type { ApiResponse } from "../types";
 
 export interface CourseFilters {
@@ -23,7 +24,13 @@ export const courseService = {
     return Axios.get(`/courses?${params.toString()}`);
   },
 
-  getCourseById: async (id: number): Promise<ApiResponse<CourseListItem>> => {
-    return Axios.get(`/courses/${id}`);
+  getCourseById: async (id: string | number): Promise<CourseDetailsResponse> => {
+    const response = await Axios.get(`/courses/${id}`);
+    return response.data;
+  },
+
+  getCategories: async (): Promise<string[]> {
+    const response = await Axios.get('/courses/categories');
+    return response.data;
   }
 };
