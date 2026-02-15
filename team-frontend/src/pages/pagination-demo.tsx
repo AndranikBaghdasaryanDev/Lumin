@@ -30,7 +30,7 @@ const mockFetchData = async (page: number) => {
   return { data, pagination };
 };
 
-const PaginationDemo: React.FC = () => {
+export const PaginationDemo = () => {
   const renderItem = (item: any, index: number) => (
     <div 
       key={item.id} 
@@ -92,5 +92,3 @@ const PaginationDemo: React.FC = () => {
     </div>
   );
 };
-
-export default PaginationDemo;
