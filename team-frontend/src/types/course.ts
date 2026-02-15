@@ -37,3 +37,22 @@ export interface CoursesData {
   courses: CourseListItem[];
   pagination: Pagination;
 }
+
+export interface Subcategory {
+  id: number;
+  name: string;
+  slug: string;
+  courseCount: number;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  courseCount: number;
+  subcategories: Subcategory[];
+}
+
+export interface CategoriesResponse {
+  categories: Category[];
+}
