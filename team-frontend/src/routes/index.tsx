@@ -6,6 +6,8 @@ import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
 import PaginationDemo from "../pages/pagination-demo";
+import CoursesListingPage from "../pages/CourseListingPage";
+import { CategoriesPage } from "../pages/Categories";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +17,13 @@ export const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/pagination-demo", element: <PaginationDemo /> },
+      { path: '/categories', 
+        element: (
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        )
+       },
       {
         path: "/dashboard",
         element: (
@@ -23,6 +32,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { 
+        path: '/courses', 
+        element: ( 
+        <ProtectedRoute>
+          <CoursesListingPage/>
+        </ProtectedRoute>
+        )
+       }
     ],
   },
 ]);
