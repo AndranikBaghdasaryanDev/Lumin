@@ -4,26 +4,26 @@ export interface Instructor {
   image: string;
 }
 
-export interface CourseListItem {
-  id: number;
+export type CourseListItem = {
+  id: string;
   title: string;
-  slug: string;
-  shortDescription: string;
   thumbnail: string;
-
-  instructor: Instructor;
-
-  level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | string;
-
+  instructor: { name: string };
+  rating: number;
+  ratingCount: number;
+  isFree: boolean;
   price: number;
   discountPrice: number;
-  isFree: boolean;
+  duration: number; // seconds
+  level: string;
+  slug: string;
+  shortDescription: string;
+  enrollmentCount: number 
+};
 
-  rating: number;          // 0 for placeholder
-  ratingCount: number;     // 0 for placeholder
-  enrollmentCount: number; // 0 for placeholder
-
-  duration: number; // in seconds
+export type CourseApiData = {
+    courses: CourseListItem[],
+    total: number
 }
 
 export interface Pagination {
@@ -36,4 +36,23 @@ export interface Pagination {
 export interface CoursesData {
   courses: CourseListItem[];
   pagination: Pagination;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
+  slug: string;
+  courseCount: number;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  courseCount: number;
+  subcategories: Subcategory[];
+}
+
+export interface CategoriesResponse {
+  categories: Category[];
 }

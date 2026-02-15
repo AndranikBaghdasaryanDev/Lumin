@@ -23,6 +23,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { 
+        path: '/courses', 
+        element: ( 
+        <ProtectedRoute>
+          <CoursesListingPage/>
+        </ProtectedRoute>
+        )
+       }
     ],
   },
 ]);
