@@ -3,33 +3,12 @@ import { useSearchParams } from "react-router-dom";
 import CourseCard from "../components/reusable/CourseCard"; // your reusable card
 import { Axios } from "../lib/api/axios";
 import type { ApiResponse } from "../lib/api/types";
-import { Error } from "../components/ui";
-
-type CourseListItem = {
-  id: string;
-  title: string;
-  thumbnail: string;
-  instructor: { name: string };
-  rating: number;
-  ratingCount: number;
-  isFree: boolean;
-  price: number;
-  discountPrice: number;
-  duration: number; // seconds
-  level: string;
-  slug: string;
-  shortDescription: string;
-  enrollmentCount: number 
-};
-
-type CourseApiData = {
-    courses: CourseListItem[],
-    total: number
-}
+import type { CourseListItem, CourseApiData } from "../types";
+import { useToastStore } from "../stores/toastStore";
 
 export default function CoursesListingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [error, setError] = useState("")  
+  const toastError = useToastStore(state => state.error)
   const [courses, setCourses] = useState<CourseListItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -56,7 +35,7 @@ export default function CoursesListingPage() {
         setCourses(data?.courses || []);
         setTotal(data?.total || 0);
       } catch (err) {
-        setError("Something went wrong")
+        toastError("Something went wrong")
         setCourses([]);
         setTotal(0);
       } finally {
@@ -125,8 +104,6 @@ export default function CoursesListingPage() {
           ))}
         </div>
       )}
-
-      {error && <Error message={error} />}
     </div>
   );
 }
