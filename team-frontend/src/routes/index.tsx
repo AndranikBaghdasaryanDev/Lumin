@@ -5,7 +5,7 @@ import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
-import PaginationDemo from "../pages/pagination-demo";
+import { PaginationDemo } from "../pages/pagination-demo";
 
 export const router = createBrowserRouter([
   {
