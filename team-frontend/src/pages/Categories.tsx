@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Axios } from "../lib/api/axios";
 import { LoadingFullPage } from "../components/ui/LoadingFullPage";
-import { Error } from "../components/ui/Error";
 import { type Category } from "../types/categories";
 import type { ApiResponse } from "../lib/api/types";
+import { useToastStore } from "../stores/toastStore";
 
-const CategoriesPage = () => {
+export const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const toastError = useToastStore((state) => state.error);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -18,7 +18,7 @@ const CategoriesPage = () => {
         const res = await Axios.get<ApiResponse<Category[]>>("/api/categories");
         setCategories(res.data.data || []);
       } catch (err: any) {
-        setError("Failed to load categories");
+        toastError("Failed to load categories");
       } finally {
         setLoading(false);
       }
@@ -28,7 +28,15 @@ const CategoriesPage = () => {
   }, []);
 
   if (loading) return <LoadingFullPage />;
-  if (error) return <Error message={error} />;
+  
+  if (!loading && categories.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <h1 className="text-3xl font-bold mb-8">Browse Categories</h1>
+        <p className="text-gray-500">No categories found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -70,5 +78,3 @@ const CategoriesPage = () => {
     </div>
   );
 };
-
-export default CategoriesPage;
