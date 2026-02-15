@@ -14,7 +14,14 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
-      { path: "/courses", element: <CoursesPage /> },
+      {
+        path: "/courses",
+        element: (
+          <ProtectedRoute>
+            <CoursesPage />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "/dashboard",
         element: (
