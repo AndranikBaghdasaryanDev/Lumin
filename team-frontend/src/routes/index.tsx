@@ -5,8 +5,7 @@ import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { DashBoard } from "../pages/dashboard";
-import CoursesListingPage from "../pages/CourseListingPage";
-import { CategoriesPage } from "../pages/Categories";
+import { PaginationDemo } from "../pages/pagination-demo";
 
 export const router = createBrowserRouter([
   {
@@ -15,13 +14,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
-      { path: '/categories', 
-        element: (
-          <ProtectedRoute>
-            <CategoriesPage />
-          </ProtectedRoute>
-        )
-       },
+      { path: "/pagination-demo", element: <PaginationDemo /> },
       {
         path: "/dashboard",
         element: (
