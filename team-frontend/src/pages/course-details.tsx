@@ -16,6 +16,7 @@ import {
   CurriculumList,
   ReviewSection,
   PriceCard,
+  InstructorCard,
   CourseDetailsSkeleton
 } from '../components/course-details';
 
@@ -101,7 +102,8 @@ const CourseDetailsPage = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
+            <InstructorCard instructor={course.instructor} />
             <PriceCard course={course} />
           </div>
         </div>
