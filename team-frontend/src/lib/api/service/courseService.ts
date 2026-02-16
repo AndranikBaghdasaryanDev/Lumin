@@ -29,7 +29,7 @@ export const courseService = {
     return response.data;
   },
 
-  getCategories: async (): Promise<string[]> {
+  getCategories: async (): Promise<string[]> => {
     const response = await Axios.get('/courses/categories');
     return response.data;
   }

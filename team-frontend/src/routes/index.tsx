@@ -34,7 +34,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      { path: "/courses/:id", element: <CourseDetailsPage /> },
       {
         path: "/dashboard",
         element: (
@@ -43,6 +42,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: '/categories',
+        element: (
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        )
+      }
     ],
   },
 ]);
