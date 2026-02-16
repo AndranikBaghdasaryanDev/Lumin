@@ -40,12 +40,13 @@ export interface CourseDetails {
   
   instructor: {
     id: number;
-    name: string;
-    bio: string;
-    avatar: string;
-    expertise: string[];
-    rating: number;
-    studentCount: number;
+    firstName: string;
+    lastName: string;
+    bio?: string;
+    profileImage?: string;
+    coursesCount?: number;
+    studentsCount?: number;
+    instructorRating?: number;
   };
   
   level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
