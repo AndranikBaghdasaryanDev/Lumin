@@ -4,7 +4,6 @@ import { transformCourse } from "../utils/courseTransformar.ts";
 import { errorResponse, successResponse } from "../utils/response.ts";
 import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { Lesson } from "../types/api-responses/lesson.ts";
-import { _coercedNumber } from "zod/v4/core";
 
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {

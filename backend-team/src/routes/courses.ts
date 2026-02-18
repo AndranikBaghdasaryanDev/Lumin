@@ -7,7 +7,7 @@ const courseRouter = Router();
 courseRouter.get("/:id", auth, controller.getCourseById);
 courseRouter.get(
   "/:courseId/lessons/:lessonId",
-//   auth,
+  auth,
   controller.getLessonById,
 );
 
