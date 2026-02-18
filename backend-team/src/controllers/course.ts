@@ -41,14 +41,13 @@ class CourseController {
       if (!lessonId) {
         return errorResponse(res, "LESSON_ID_REQUIRED", "Lesson id required");
       }
-      const authHeader = {
-        authorization: `${req.headers.authorization}`,
-      };
 
       const response = await api.get<ApiResponse<Lesson>>(
         `/lessons/${lessonId}`,
         {
-          headers: authHeader,
+          headers: {
+            Authorization: `Bearer ${req.token}`,
+          },
         },
       );
 
