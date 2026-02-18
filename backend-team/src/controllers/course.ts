@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import api from "../lib/api.ts";
 import { transformCourse } from "../utils/courseTransformar.ts";
 import { errorResponse, successResponse } from "../utils/response.ts";
+import type { ApiResponse } from "../types/api-responses/api.ts";
+import type { Lesson } from "../types/api-responses/lesson.ts";
 
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
@@ -30,6 +32,37 @@ class CourseController {
         "Failed to fetch course",
         500,
       );
+    }
+  }
+
+  async getLessonById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { courseId, lessonId } = req.params;
+      if (!lessonId) {
+        return errorResponse(res, "LESSON_ID_REQUIRED", "Lesson id required");
+      }
+
+      const response = await api.get<ApiResponse<Lesson>>(
+        `/lessons/${lessonId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${req.token}`,
+          },
+        },
+      );
+
+      if (response.data.success) {
+        return successResponse(res, response);
+      } else {
+        return errorResponse(
+          res,
+          "ENROLLMENT_REQUIRED",
+          "Enrollment required",
+          403,
+        );
+      }
+    } catch (err) {
+      next(err);
     }
   }
 }

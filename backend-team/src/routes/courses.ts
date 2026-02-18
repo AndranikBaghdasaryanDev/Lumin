@@ -4,6 +4,11 @@ import controller from "../controllers/course.ts";
 
 const courseRouter = Router();
 
-courseRouter.get("/:id",auth, controller.getCourseById);
+courseRouter.get("/:id", auth, controller.getCourseById);
+courseRouter.get(
+  "/:courseId/lessons/:lessonId",
+  auth,
+  controller.getLessonById,
+);
 
 export default courseRouter;
