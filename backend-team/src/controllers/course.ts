@@ -21,7 +21,7 @@ class CourseController {
 
       const response = await api.get(`/courses/${id}`);
 
-      const course = response.data.data;
+      const course = response.data.data
       const transformedCourse = transformCourse(course);
 
       return successResponse(res, transformedCourse);
