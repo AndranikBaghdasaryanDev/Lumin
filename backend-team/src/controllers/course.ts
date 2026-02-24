@@ -4,6 +4,7 @@ import { transformCourse } from "../utils/courseTransformar.ts";
 import { errorResponse, successResponse } from "../utils/response.ts";
 import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { Lesson } from "../types/api-responses/lesson.ts";
+import type { CoursesCoreQuery } from "../types/query/listCoursesQuery.ts";
 
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
@@ -21,7 +22,7 @@ class CourseController {
 
       const response = await api.get(`/courses/${id}`);
 
-      const course = response.data.data
+      const course = response.data.data;
       const transformedCourse = transformCourse(course);
 
       return successResponse(res, transformedCourse);
@@ -63,6 +64,44 @@ class CourseController {
       }
     } catch (err) {
       next(err);
+    }
+  }
+
+  async getAllCourses(req: Request, res: Response, next: NextFunction) {
+    const { page, limit, categoryId, level, search, sort, isFree } =
+      req.validated?.query;
+
+    const coreQuery: CoursesCoreQuery = {
+      page,
+      limit,
+      ...(categoryId !== undefined && { categoryId }),
+      ...(level !== undefined && { level }),
+      ...(search !== undefined && { search }),
+      ...(sort !== undefined && { sort }),
+      ...(isFree !== undefined && { isFree }),
+    };
+    console.log(typeof isFree)
+    const response = await api.get("/courses", {
+      headers: {
+        Authorization: `Bearer ${req.token}`,
+      },
+      params: coreQuery,
+    });
+
+    if (response.data.success) {
+      if (response.data.data.courses.length === 0) {
+        return successResponse(res, response.data.data);
+      }
+
+      return successResponse(res, response.data.data);
+    } else {
+      errorResponse(
+        res,
+        response.data.error?.code ?? "CORE_BACKEND_ERROR",
+        response.data.error?.message ??
+          "An error occurred while fetching courses from Core Backend",
+        400,
+      );
     }
   }
 }
