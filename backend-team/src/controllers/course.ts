@@ -80,7 +80,6 @@ class CourseController {
       ...(sort !== undefined && { sort }),
       ...(isFree !== undefined && { isFree }),
     };
-    console.log(typeof isFree)
     const response = await api.get("/courses", {
       headers: {
         Authorization: `Bearer ${req.token}`,
