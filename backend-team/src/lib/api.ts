@@ -19,6 +19,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       url: config.url,
       data: config.data,
       headers: config.headers,
+      query: config.params,
     },
     "Outgoing Core Backend request",
   );

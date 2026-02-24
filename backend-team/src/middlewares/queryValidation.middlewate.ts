@@ -2,7 +2,7 @@ import { ZodError, ZodType } from "zod";
 import type { Request, Response, NextFunction } from "express";
 import { errorResponse } from "../utils/response.ts";
 
-export function paginationValidate<T extends ZodType<any, any, any>>(
+export function queryValidate<T extends ZodType<any, any, any>>(
   schema: T,
 ) {
   return function (req: Request, res: Response, next: NextFunction) {
@@ -10,7 +10,6 @@ export function paginationValidate<T extends ZodType<any, any, any>>(
       const parsed = schema.parse({
         query: req.query,
       });
-
       req.validated = req.validated || {};
       req.validated.query = {
         ...parsed.query,

@@ -10,7 +10,6 @@ export function validate(schema: ZodType) {
         query: req.query,
         params: req.params,
       });
-
       next();
     } catch (err) {
       if (err instanceof ZodError) {
