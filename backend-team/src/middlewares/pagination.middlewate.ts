@@ -15,7 +15,6 @@ export function paginationValidate<T extends ZodType<any, any, any>>(
       req.validated.query = {
         ...parsed.query,
       };
-      console.log(req.validated);
       next();
     } catch (err) {
       if (err instanceof ZodError) {
