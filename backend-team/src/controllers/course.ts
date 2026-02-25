@@ -5,7 +5,7 @@ import { errorResponse, successResponse } from "../utils/response.ts";
 import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { Lesson } from "../types/api-responses/lesson.ts";
 import type { CoursesCoreQuery } from "../types/query/listCoursesQuery.ts";
-import type { Category, Course } from "../types/api-responses/course.ts";
+import type { Course } from "../types/api-responses/course.ts";
 
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {

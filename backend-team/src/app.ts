@@ -8,7 +8,8 @@ import authRouter from "./routes/auth.ts";
 import profileRouter from "./routes/profile.ts";
 import { swaggerSpec, swaggerUiOptions } from "./config/swagger.ts";
 import swaggerUi from "swagger-ui-express";
-import courseRouter from "./routes/courses.ts";
+import courseRouter from "./routes/course.ts";
+import categoryRouter from "./routes/category.ts";
 
 export const app = express();
 app.use(httpLogger);
@@ -23,9 +24,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Swagger Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
-app.get('/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerUiOptions),
+);
+app.get("/api-docs.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
 });
 
@@ -34,4 +39,5 @@ app.use("/api", healthRoute);
 app.use("/api", authRouter);
 app.use("/api", profileRouter);
 app.use("/api/courses", courseRouter);
+app.use("/api/categories", categoryRouter);
 app.use(errorHandler);

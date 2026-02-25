@@ -1,4 +1,6 @@
-import type { Lesson } from "./lesson.ts";
+import type { Category } from "./category.ts";
+import type { Instructor } from "./instructor.ts";
+import type { Section } from "./section.ts";
 
 export interface Course {
   id: number;
@@ -36,30 +38,6 @@ export interface Course {
   enrollmentCount?: number; //sprint 3
   isEnrolled?: boolean; //sprint 3
   enrollmentProgress?: any; //sprint 3
-}
-
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
-
-interface Section {
-  id: number;
-  title: string;
-  description: string;
-  order: number;
-  courseId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  lessons: any[];
-}
-
-interface Instructor {
-  id: number;
-  firstName: string;
-  lastName: string;
-  profileImage: string;
 }
 
 export interface TransformedCourse {
