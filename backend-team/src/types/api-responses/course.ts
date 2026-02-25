@@ -1,3 +1,5 @@
+import type { Lesson } from "./lesson.ts";
+
 export interface Course {
   id: number;
   title: string;
@@ -5,29 +7,59 @@ export interface Course {
   description: string;
   shortDescription: string;
   thumbnailUrl: string;
+  previewVideoUrl: string;
   level: string;
   language: string;
   price: number;
   discountPrice: number;
-  categories: string[]; //not listed in swagger, must be
   isFree: boolean;
-  previewVideoUrl: string;
   status: string;
-  sections: any[]; //not listed in swagger, must be
-  rejectionReason: string;
+  rejectionReason: string | null;
   requirements: string[];
   whatYouLearn: string[];
-  targetAudience: string; //not listed in swagger
-  isActive: boolean;
-  instructor: any; // instructor must be object with some fields not instructorId as in swagger
   publishedAt: Date;
+  isActive: boolean;
+  targetAudience: string;
+  rating?: number; //sprint 3
+  categories: Category[];
+  sections: Section[];
+  instructorId: number;
+  instructor: Instructor;
   createdAt: Date;
   updatedAt: Date;
-  rating?: number; //sprint 3
+  duration: number;
+  lectureCount: number;
+  _count: {
+    enrollments: number;
+  };
   ratingCount?: number; //sprint 3
   enrollmentCount?: number; //sprint 3
   isEnrolled?: boolean; //sprint 3
   enrollmentProgress?: any; //sprint 3
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface Section {
+  id: number;
+  title: string;
+  description: string;
+  order: number;
+  courseId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  lessons: any[];
+}
+
+interface Instructor {
+  id: number;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
 }
 
 export interface TransformedCourse {

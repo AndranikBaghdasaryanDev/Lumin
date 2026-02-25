@@ -6,12 +6,15 @@ import { querySchema } from "../schemas/query.ts";
 
 const courseRouter = Router();
 
-courseRouter.get("/:id", auth, controller.getCourseById);
 courseRouter.get(
   "/:courseId/lessons/:lessonId",
   auth,
   controller.getLessonById,
 );
+
+courseRouter.get("/:id/related", auth, controller.getRelatedCourses);
+
+courseRouter.get("/:id", auth, controller.getCourseById);
 
 courseRouter.get(
   "/",
