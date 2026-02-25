@@ -1,5 +1,5 @@
 import { Axios } from "../axios";
-import type { CoursesData } from "../../../types/course";
+import type { CourseListItem, CoursesData } from "../../../types/course";
 import type { CourseDetailsResponse } from "../../../types/course.types";
 import type { ApiResponse } from "../types";
 
@@ -32,5 +32,10 @@ export const courseService = {
   getCategories: async (): Promise<string[]> => {
     const response = await Axios.get('/courses/categories');
     return response.data;
+  },
+
+  getRelatedCourses: async (id: string): Promise<CourseListItem[]> => {
+    const response = await Axios.get<ApiResponse<CourseListItem[]>>(`/courses/${id}/related`);
+    return response.data.data ?? [];
   }
 };
