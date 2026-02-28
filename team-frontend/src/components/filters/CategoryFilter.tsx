@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import toast from "react-hot-toast";
 import { categoryService } from "../../lib/api/service/categoryService";
 import type { Category } from "../../types/course";
 import { Loading } from "../ui/Loading";
+import { useToastStore } from "../../stores/toastStore";
 
 interface CategoryFilterProps {
   className?: string;
@@ -15,6 +15,7 @@ export const CategoryFilter = ({ className }: CategoryFilterProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
+  const { success, error } = useToastStore();
 
   const selectedCategoryId = searchParams.get("categoryId");
   const selectedSubcategoryId = searchParams.get("subcategoryId");
@@ -25,10 +26,10 @@ export const CategoryFilter = ({ className }: CategoryFilterProps) => {
         setLoading(true);
         const data = await categoryService.getCategories();
         setCategories(data.categories);
-        toast.success("Categories loaded successfully");
+        success("Categories loaded successfully");
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : "Failed to load categories";
-        toast.error(`${errorMessage}. Please try again.`);
+        error(`${errorMessage}. Please try again.`);
         setCategories([]);
       } finally {
         setLoading(false);
@@ -69,7 +70,7 @@ export const CategoryFilter = ({ className }: CategoryFilterProps) => {
     setSearchParams(newParams);
     
     if (category) {
-      toast.success(`Selected: ${category.name}`);
+      success(`Selected: ${category.name}`);
     }
   };
 
@@ -82,7 +83,7 @@ export const CategoryFilter = ({ className }: CategoryFilterProps) => {
     setSearchParams(newParams);
     
     if (category && subcategory) {
-      toast.success(`Selected: ${category.name} > ${subcategory.name}`);
+      success(`Selected: ${category.name} > ${subcategory.name}`);
     }
   };
 
@@ -91,7 +92,7 @@ export const CategoryFilter = ({ className }: CategoryFilterProps) => {
     newParams.delete("categoryId");
     newParams.delete("subcategoryId");
     setSearchParams(newParams);
-    toast.success("Filters cleared");
+    success("Filters cleared");
   };
 
   const isCategorySelected = (categoryId: number) => {
