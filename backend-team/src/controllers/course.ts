@@ -8,6 +8,9 @@ import type { CoursesCoreQuery } from "../types/query/listCoursesQuery.ts";
 import type { Course } from "../types/api-responses/course.ts";
 import { redis } from "../utils/cache.ts";
 import logger from "../lib/logger.ts";
+import env from "../config/env.ts";
+import type { Category } from "../types/api-responses/category.ts";
+import { log } from "node:console";
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
     try {
@@ -34,7 +37,12 @@ class CourseController {
       const course = response.data.data;
       const transformedCourse = transformCourse(course);
 
-      await redis.set(key, JSON.stringify(transformedCourse), "EX", 300);
+      await redis.set(
+        key,
+        JSON.stringify(transformedCourse),
+        "EX",
+        env.COURESES_CACHE_TIME,
+      );
 
       return successResponse(res, transformedCourse);
     } catch (error) {
@@ -121,7 +129,12 @@ class CourseController {
 
       const dataToCache = response.data.data;
 
-      await redis.set(key, JSON.stringify(dataToCache), "EX", 300);
+      await redis.set(
+        key,
+        JSON.stringify(dataToCache),
+        "EX",
+        env.COURESES_CACHE_TIME,
+      );
 
       return successResponse(res, dataToCache);
     } catch (err) {
@@ -131,7 +144,6 @@ class CourseController {
   async getRelatedCourses(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-
       if (!id) {
         return errorResponse(
           res,
@@ -141,18 +153,45 @@ class CourseController {
         );
       }
 
-      const courseInfo = await api.get<ApiResponse<Course>>(`/courses/${id}`);
-
-      if (!courseInfo.data.success) {
-        return errorResponse(
-          res,
-          courseInfo.data.error?.code ?? "COURSE_FETCH_FAILED",
-          courseInfo.data.error?.message ?? "Failed to fetch course",
-        );
+      const key = `course:${id}/related`;
+      const cachedRelatedCourses = await redis.get(key);
+      if (cachedRelatedCourses) {
+        logger.info("Returning courses from cache");
+        return successResponse(res, JSON.parse(cachedRelatedCourses));
       }
 
-      const categories = courseInfo.data.data?.categories;
+      let course: Course | null = null;
 
+      const cached = await redis.get(`course:${id}`);
+      if (cached) {
+        logger.info("Course found in cache");
+        course = JSON.parse(cached) as Course;
+      } else {
+        const courseInfo = await api.get<ApiResponse<Course>>(`/courses/${id}`);
+
+        if (!courseInfo.data.success || !courseInfo.data.data) {
+          return errorResponse(
+            res,
+            courseInfo.data.error?.code ?? "COURSE_FETCH_FAILED",
+            courseInfo.data.error?.message ?? "Failed to fetch course",
+            400,
+          );
+        }
+
+        course = courseInfo.data.data;
+
+        await redis.set(
+          `course:${id}`,
+          JSON.stringify(course),
+          "EX",
+          env.COURESES_CACHE_TIME,
+        );
+      }
+      if (!course) {
+        return errorResponse(res, "COURSE_NOT_FOUND", "Course not found", 404);
+      }
+
+      const categories = course.categories;
       if (!categories || categories.length === 0) {
         return errorResponse(
           res,
@@ -164,7 +203,7 @@ class CourseController {
 
       const categoryId = categories[0]?.id;
 
-      const coursesResponse = await api.get(
+      const coursesResponse = await api.get<ApiResponse<{ courses: Course[] }>>(
         `/courses?categoryId=${categoryId}&limit=6`,
       );
 
@@ -174,13 +213,22 @@ class CourseController {
           coursesResponse.data.error?.code ?? "RELATED_COURSES_FETCH_FAILED",
           coursesResponse.data.error?.message ??
             "Failed to fetch related courses",
+          400,
         );
       }
-      const filteredCourse = coursesResponse.data.data.courses.filter(
-        (course: Course) => course.id !== Number(id),
+
+      const filteredCourses = coursesResponse.data.data.courses.filter(
+        (c: Course) => c.id !== Number(id),
       );
 
-      return successResponse(res, filteredCourse);
+      await redis.set(
+        key,
+        JSON.stringify(filteredCourses),
+        "EX",
+        env.COURESES_CACHE_TIME,
+      );
+
+      return successResponse(res, filteredCourses);
     } catch (err) {
       next(err);
     }

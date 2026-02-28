@@ -5,6 +5,7 @@ import { categoryTransform } from "../utils/catergoryTransformer.ts";
 import type { TransformedCategory } from "../types/api-responses/category.ts";
 import { redis } from "../utils/cache.ts";
 import logger from "../lib/logger.ts";
+import env from "../config/env.ts";
 
 class CategoryController {
   async getAllCategories(req: Request, res: Response, next: NextFunction) {
@@ -29,7 +30,7 @@ class CategoryController {
       const transformedCategory: TransformedCategory =
         response.data.data.map(categoryTransform);
 
-      await redis.set(key, JSON.stringify(transformedCategory), "EX", 1800);
+      await redis.set(key, JSON.stringify(transformedCategory), "EX", env.CATEGORIES_CACHE_TIME);
       return successResponse(res, transformedCategory);
     } catch (err) {
       next(err);

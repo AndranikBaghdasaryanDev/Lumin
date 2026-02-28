@@ -9,6 +9,8 @@ const env = {
   CORE_BACKEND_URL: process.env.CORE_BACKEND_URL!,
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY!,
   JWT_SECRET: process.env.JWT_SECRET!,
+  COURESES_CACHE_TIME: process.env.COURESES_CACHE_TIME!,
+  CATEGORIES_CACHE_TIME: process.env.CATEGORIES_CACHE_TIME!,
 };
 
 for (let [k, v] of Object.entries(env)) {
