@@ -3,10 +3,19 @@ import api from "../lib/api.ts";
 import { errorResponse, successResponse } from "../utils/response.ts";
 import { categoryTransform } from "../utils/catergoryTransformer.ts";
 import type { TransformedCategory } from "../types/api-responses/category.ts";
+import { redis } from "../utils/cache.ts";
+import logger from "../lib/logger.ts";
 
 class CategoryController {
   async getAllCategories(req: Request, res: Response, next: NextFunction) {
     try {
+      const key = "categories";
+      const cachedCategories = await redis.get(key);
+      if (cachedCategories) {
+        logger.info("Returning categories from cache");
+        return successResponse(res, JSON.parse(cachedCategories));
+      }
+
       const response = await api.get("/categories");
 
       if (!response.data.success) {
@@ -17,9 +26,11 @@ class CategoryController {
         );
       }
 
-      const transformed : TransformedCategory= response.data.data.map(categoryTransform);
+      const transformedCategory: TransformedCategory =
+        response.data.data.map(categoryTransform);
 
-      return successResponse(res, transformed);
+      await redis.set(key, JSON.stringify(transformedCategory), "EX", 1800);
+      return successResponse(res, transformedCategory);
     } catch (err) {
       next(err);
     }

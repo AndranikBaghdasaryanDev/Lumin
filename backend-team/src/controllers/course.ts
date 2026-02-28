@@ -6,7 +6,8 @@ import type { ApiResponse } from "../types/api-responses/api.ts";
 import type { Lesson } from "../types/api-responses/lesson.ts";
 import type { CoursesCoreQuery } from "../types/query/listCoursesQuery.ts";
 import type { Course } from "../types/api-responses/course.ts";
-
+import { redis } from "../utils/cache.ts";
+import logger from "../lib/logger.ts";
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
     try {
@@ -21,10 +22,19 @@ class CourseController {
         );
       }
 
+      const key = `course:${id}`;
+      const cachedCourse = await redis.get(key);
+      if (cachedCourse) {
+        logger.info("Returning course from cache");
+        return successResponse(res, JSON.parse(cachedCourse));
+      }
+
       const response = await api.get(`/courses/${id}`);
 
       const course = response.data.data;
       const transformedCourse = transformCourse(course);
+
+      await redis.set(key, JSON.stringify(transformedCourse), "EX", 300);
 
       return successResponse(res, transformedCourse);
     } catch (error) {
@@ -69,39 +79,53 @@ class CourseController {
   }
 
   async getAllCourses(req: Request, res: Response, next: NextFunction) {
-    const { page, limit, categoryId, level, search, sort, isFree } =
-      req.validated?.query;
+    try {
+      const { page, limit, categoryId, level, search, sort, isFree } =
+        req.validated?.query;
 
-    const coreQuery: CoursesCoreQuery = {
-      page,
-      limit,
-      ...(categoryId !== undefined && { categoryId }),
-      ...(level !== undefined && { level }),
-      ...(search !== undefined && { search }),
-      ...(sort !== undefined && { sort }),
-      ...(isFree !== undefined && { isFree }),
-    };
-    const response = await api.get("/courses", {
-      headers: {
-        Authorization: `Bearer ${req.token}`,
-      },
-      params: coreQuery,
-    });
+      const coreQuery: CoursesCoreQuery = {
+        page,
+        limit,
+        ...(categoryId !== undefined && { categoryId }),
+        ...(level !== undefined && { level }),
+        ...(search !== undefined && { search }),
+        ...(sort !== undefined && { sort }),
+        ...(isFree !== undefined && { isFree }),
+      };
 
-    if (response.data.success) {
-      if (response.data.data.courses.length === 0) {
-        return successResponse(res, response.data.data);
+      const key = JSON.stringify(coreQuery);
+      logger.info(key);
+
+      const cached = await redis.get(key);
+      if (cached) {
+        logger.info("Returning courses from cache");
+        return successResponse(res, JSON.parse(cached));
       }
 
-      return successResponse(res, response.data.data);
-    } else {
-      errorResponse(
-        res,
-        response.data.error?.code ?? "CORE_BACKEND_ERROR",
-        response.data.error?.message ??
-          "An error occurred while fetching courses from Core Backend",
-        400,
-      );
+      const response = await api.get("/courses", {
+        headers: {
+          Authorization: `Bearer ${req.token}`,
+        },
+        params: coreQuery,
+      });
+
+      if (!response.data.success) {
+        return errorResponse(
+          res,
+          response.data.error?.code ?? "CORE_BACKEND_ERROR",
+          response.data.error?.message ??
+            "An error occurred while fetching courses from Core Backend",
+          400,
+        );
+      }
+
+      const dataToCache = response.data.data;
+
+      await redis.set(key, JSON.stringify(dataToCache), "EX", 300);
+
+      return successResponse(res, dataToCache);
+    } catch (err) {
+      next(err);
     }
   }
   async getRelatedCourses(req: Request, res: Response, next: NextFunction) {
