@@ -9,8 +9,6 @@ import type { Course } from "../types/api-responses/course.ts";
 import { redis } from "../utils/cache.ts";
 import logger from "../lib/logger.ts";
 import env from "../config/env.ts";
-import type { Category } from "../types/api-responses/category.ts";
-import { log } from "node:console";
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
     try {
@@ -72,7 +70,7 @@ class CourseController {
       );
 
       if (response.data.success) {
-        return successResponse(res, response);
+        return successResponse(res, response.data.data);
       } else {
         return errorResponse(
           res,
