@@ -4,11 +4,12 @@ import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
-import { DashBoard } from "../pages/dashboard";
-import CoursesListingPage from "../pages/CourseListingPage";
+import DashboardLayout from "../components/DashboardLayout";
+import DashboardPage from "../pages/dashboard";
+import CoursesList from "../pages/CoursesList";
+import CourseDetails from "../pages/CourseDetails";
 import { CategoriesPage } from "../pages/Categories";
 import { PaginationDemo } from "../pages/pagination-demo";
-import CourseDetailsPage from "../pages/course-details";
 
 export const router = createBrowserRouter([
   {
@@ -19,37 +20,35 @@ export const router = createBrowserRouter([
       { path: "/register", element: <Register /> },
       { path: "/pagination-demo", element: <PaginationDemo /> },
       {
-        path: "/courses",
-        element: (
-          <ProtectedRoute>
-            <CoursesListingPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/courses/:id",
-        element: (
-          <ProtectedRoute>
-            <CourseDetailsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: "/dashboard",
         element: (
           <ProtectedRoute>
-            <DashBoard />
+            <DashboardLayout />
           </ProtectedRoute>
         ),
+        children: [{ index: true, element: <DashboardPage /> }],
       },
       {
-        path: '/categories',
+        path: "/courses",
         element: (
           <ProtectedRoute>
-            <CategoriesPage />
+            <DashboardLayout />
           </ProtectedRoute>
-        )
-      }
+        ),
+        children: [
+          { index: true, element: <CoursesList /> },
+          { path: ":id", element: <CourseDetails /> },
+        ],
+      },
+      {
+        path: "/categories",
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [{ index: true, element: <CategoriesPage /> }],
+      },
     ],
   },
 ]);
