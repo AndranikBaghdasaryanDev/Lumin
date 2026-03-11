@@ -145,27 +145,9 @@ const Sidebar = () => {
       badge: "8",
     },
     {
-      name: "Students",
-      href: "/students",
-      icon: Users,
-      badge: "1.2k",
-    },
-    {
-      name: "Reports",
-      href: "/reports",
-      icon: FileText,
-      badge: null,
-    },
-    {
       name: "Settings",
       href: "/settings",
       icon: Settings,
-      badge: null,
-    },
-    {
-      name: "Help",
-      href: "/help",
-      icon: HelpCircle,
       badge: null,
     },
   ];
@@ -187,19 +169,6 @@ const Sidebar = () => {
           {navItems.map((item) => (
             <NavigationItem key={item.name} item={item} isActive={false} />
           ))}
-        </div>
-
-        <div className="px-3 mt-8 mb-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Quick Actions
-          </p>
-        </div>
-
-        <div className="px-3">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-            <Award className="w-5 h-5" />
-            <span className="font-medium">Create Course</span>
-          </button>
         </div>
       </nav>
 

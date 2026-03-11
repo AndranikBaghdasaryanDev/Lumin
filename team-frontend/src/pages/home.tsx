@@ -1,11 +1,51 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { PlayIcon, StarIcon, ClockIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import { Skeleton } from "../components/ui/Skeleton";
+import { useToastStore } from "../stores/toastStore";
+import { fetchCourses } from "../services/courseService";
+import type { CourseListItem } from "../types/course";
 
 export function Home() {
-  const courses = [
-    { id: 1, title: "Modern React Architecture", author: "Sarah Drasner", price: "$89.99", rating: 4.9, students: "12k", image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop" },
-    { id: 2, title: "UI/UX Design Masterclass", author: "Gary Simon", price: "$74.99", rating: 4.8, students: "8k", image: "https://images.unsplash.com/photo-1586717791821-3f44a563dc4c?w=800&auto=format&fit=crop" },
-    { id: 3, title: "Node.js Backend Systems", author: "Maximilian S.", price: "$99.00", rating: 5.0, students: "5k", image: "https://images.unsplash.com/photo-1502945015378-0e284ca1a5be?w=800&auto=format&fit=crop" },
-  ];
+  const toastError = useToastStore((state) => state.error);
+  const [courses, setCourses] = useState<CourseListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadRecommendedCourses = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchCourses({ page: 1, limit: 3, sort: "newest" });
+        setCourses(data.courses);
+      } catch {
+        setCourses([]);
+        toastError("Failed to load recommended courses");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecommendedCourses();
+  }, [toastError]);
+
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    return `${hours > 0 ? `${hours}h ` : ""}${minutes}m`;
+  };
+
+  const formatPrice = (course: CourseListItem) => {
+    if (course.isFree) {
+      return "Free";
+    }
+
+    const price = course.discountPrice > 0 && course.discountPrice < course.price
+      ? course.discountPrice
+      : course.price;
+
+    return `$${price}`;
+  };
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
@@ -23,9 +63,9 @@ export function Home() {
               Join over 5,000+ students learning the latest technologies with industry experts.
             </p>
             <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-10 rounded-2xl shadow-xl shadow-blue-200/50 hover:shadow-2xl hover:shadow-blue-200/60 transition-all duration-300 active:scale-95">
+              <Link to="/courses" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-10 rounded-2xl shadow-xl shadow-blue-200/50 hover:shadow-2xl hover:shadow-blue-200/60 transition-all duration-300 active:scale-95">
                 Explore Courses
-              </button>
+              </Link>
               <button className="bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-10 rounded-2xl transition-all duration-300">
                 Learn More
               </button>
@@ -58,56 +98,66 @@ export function Home() {
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Recommended for you</h2>
             <p className="text-gray-500 mt-3 text-lg">Based on your interests and recent search history</p>
           </div>
-          <button className="text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-200">View all courses →</button>
+          <Link to="/courses" className="text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-200">View all courses →</Link>
         </div>
 
         {/* Course Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course) => (
-            <div key={course.id} className="group bg-white rounded-3xl border border-gray-100/80 overflow-hidden hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 flex flex-col">
-              {/* Image Container */}
-              <div className="relative h-56 overflow-hidden">
-                <img 
-                  src={course.image} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                  alt={course.title}
-                />
-                <div className="absolute top-6 left-6 bg-white/95 backdrop-blur px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-blue-600 shadow-lg border border-blue-100">
-                  Best Seller
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-3xl border border-gray-100/80 overflow-hidden p-8">
+                  <Skeleton className="h-56 w-full rounded-2xl mb-6" />
+                  <Skeleton className="h-5 w-1/3 rounded mb-3" />
+                  <Skeleton className="h-6 w-3/4 rounded mb-3" />
+                  <Skeleton className="h-4 w-1/2 rounded mb-6" />
+                  <Skeleton className="h-10 w-full rounded" />
                 </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-8 flex flex-col flex-1">
-                <div className="flex items-center gap-1 text-yellow-400 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <StarIcon key={i} className="w-5 h-5" />
-                  ))}
-                  <span className="text-gray-400 text-xs font-bold ml-2">({course.rating})</span>
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-200">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-gray-500 mb-6 font-medium">{course.author}</p>
-
-                {/* Stats */}
-                <div className="mt-auto flex items-center justify-between pt-6 border-t border-gray-50">
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <ClockIcon className="w-5 h-5" />
-                      12h 30m
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <UserGroupIcon className="w-5 h-5" />
-                      {course.students}
+              ))
+            : courses.map((course) => (
+                <Link key={course.id} to={`/courses/${course.id}`} className="group bg-white rounded-3xl border border-gray-100/80 overflow-hidden hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 flex flex-col">
+                  {/* Image Container */}
+                  <div className="relative h-56 overflow-hidden">
+                    <img 
+                      src={course.thumbnail} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      alt={course.title}
+                    />
+                    <div className="absolute top-6 left-6 bg-white/95 backdrop-blur px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-blue-600 shadow-lg border border-blue-100">
+                      {course.isFree ? "Free" : "Recommended"}
                     </div>
                   </div>
-                  <span className="text-xl font-black text-gray-900">{course.price}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+
+                  {/* Content */}
+                  <div className="p-8 flex flex-col flex-1">
+                    <div className="flex items-center gap-1 text-yellow-400 mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <StarIcon key={i} className="w-5 h-5" />
+                      ))}
+                      <span className="text-gray-400 text-xs font-bold ml-2">({course.rating.toFixed(1)})</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-200">
+                      {course.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6 font-medium">{course.instructor.name}</p>
+
+                    {/* Stats */}
+                    <div className="mt-auto flex items-center justify-between pt-6 border-t border-gray-50">
+                      <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                          <ClockIcon className="w-5 h-5" />
+                          {formatDuration(course.duration)}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                          <UserGroupIcon className="w-5 h-5" />
+                          {course.enrollmentCount}
+                        </div>
+                      </div>
+                      <span className="text-xl font-black text-gray-900">{formatPrice(course)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
         </div>
       </section>
 

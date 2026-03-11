@@ -4,27 +4,58 @@ export interface Instructor {
   image: string;
 }
 
+export type CourseLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+
+export interface CourseSectionLesson {
+  id: number;
+  title: string;
+  description: string;
+  durationSeconds: number;
+  isPreview: boolean;
+}
+
+export interface CourseSection {
+  id: number;
+  title: string;
+  description: string;
+  duration: number;
+  lessonsCount: number;
+  lessons: CourseSectionLesson[];
+}
+
 export type CourseListItem = {
-  id: string;
+  id: number;
   title: string;
   thumbnail: string;
-  instructor: { name: string };
+  instructor: Instructor;
   rating: number;
   ratingCount: number;
   isFree: boolean;
   price: number;
   discountPrice: number;
-  duration: number; // seconds
-  level: string;
+  duration: number;
+  lectureCount?: number;
+  level: CourseLevel;
   slug: string;
   shortDescription: string;
-  enrollmentCount: number 
+  enrollmentCount: number;
+  description?: string;
+  language?: string;
+  requirements?: string[];
+  whatYouLearn?: string[];
+  targetAudience?: string | string[];
+  categories?: string[];
+  sections?: CourseSection[];
+  previewVideo?: string;
+  status?: string;
+  rejectionReason?: string | null;
+  isActive?: boolean;
+  publishedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  isEnrolled?: boolean;
+  enrollmentProgress?: number | null;
 };
-
-export type CourseApiData = {
-    courses: CourseListItem[],
-    total: number
-}
 
 export interface Pagination {
   page: number;
@@ -36,6 +67,16 @@ export interface Pagination {
 export interface CoursesData {
   courses: CourseListItem[];
   pagination: Pagination;
+}
+
+export interface CoursesFilters {
+  page?: number;
+  limit?: number;
+  categoryId?: number;
+  level?: CourseLevel;
+  search?: string;
+  sort?: "newest" | "price_low" | "price_high";
+  isFree?: boolean;
 }
 
 export interface Subcategory {
