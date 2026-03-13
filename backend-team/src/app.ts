@@ -10,6 +10,7 @@ import { swaggerSpec, swaggerUiOptions } from "./config/swagger.ts";
 import swaggerUi from "swagger-ui-express";
 import courseRouter from "./routes/course.ts";
 import categoryRouter from "./routes/category.ts";
+import cartRouter from "./routes/cart.ts";
 
 export const app = express();
 app.use(httpLogger);
@@ -40,4 +41,5 @@ app.use("/api", authRouter);
 app.use("/api", profileRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/categories", categoryRouter);
+app.use("/api/cart", cartRouter);
 app.use(errorHandler);

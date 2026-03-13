@@ -9,6 +9,7 @@ import type { Course } from "../types/api-responses/course.ts";
 import { redis } from "../utils/cache.ts";
 import logger from "../lib/logger.ts";
 import env from "../config/env.ts";
+import { getCourseByIdInternal } from "../utils/course.utils.ts";
 class CourseController {
   async getCourseById(req: Request, res: Response, next: NextFunction) {
     try {
@@ -23,26 +24,8 @@ class CourseController {
         );
       }
 
-      const key = `course:${id}`;
-      const cachedCourse = await redis.get(key);
-      if (cachedCourse) {
-        logger.info("Returning course from cache");
-        return successResponse(res, JSON.parse(cachedCourse));
-      }
-
-      const response = await api.get(`/courses/${id}`);
-
-      const course = response.data.data;
-      const transformedCourse = transformCourse(course);
-
-      await redis.set(
-        key,
-        JSON.stringify(transformedCourse),
-        "EX",
-        env.COURESES_CACHE_TIME,
-      );
-
-      return successResponse(res, transformedCourse);
+      const course = await getCourseByIdInternal(Number(id));
+      return successResponse(res, course);
     } catch (error) {
       return errorResponse(
         res,
@@ -139,6 +122,7 @@ class CourseController {
       next(err);
     }
   }
+
   async getRelatedCourses(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
