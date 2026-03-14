@@ -4,7 +4,7 @@ import CourseCard from '../components/reusable/CourseCard';
 import { FilterPanel } from '../components/filters/FilterPanel';
 import { FilterButton } from '../components/filters/FilterButton';
 import type { Category } from '../types/filters';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Search, SortAsc } from 'lucide-react';
 
 // Mock categories - in a real app, these would come from an API
 const mockCategories: Category[] = [
@@ -17,6 +17,8 @@ const mockCategories: Category[] = [
 
 export const CoursesPage: React.FC = () => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'price_low' | 'price_high' | undefined>();
   
   const {
     coursesData,
@@ -30,10 +32,20 @@ export const CoursesPage: React.FC = () => {
   } = useCourses();
 
   // Debug logging
-  console.log("CoursesPage render - coursesData:", coursesData);
-  console.log("CoursesPage render - loading:", loading);
-  console.log("CoursesPage render - error:", error);
-  console.log("CoursesPage render - courses count:", coursesData?.courses?.length);
+  console.log("🎨 CoursesPage render - coursesData:", coursesData);
+  console.log("🎨 CoursesPage render - loading:", loading);
+  console.log("🎨 CoursesPage render - error:", error);
+  console.log("🎨 CoursesPage render - courses count:", coursesData?.courses?.length);
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    updateFilters({ search: term || undefined });
+  };
+
+  const handleSortChange = (sort: 'newest' | 'price_low' | 'price_high' | undefined) => {
+    setSortOrder(sort);
+    updateFilters({ sort });
+  };
 
   const handleCategoryChange = (categoryId: number | undefined) => {
     updateFilters({ categoryId });
@@ -66,7 +78,7 @@ export const CoursesPage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error && error.trim() !== '') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
@@ -96,9 +108,9 @@ export const CoursesPage: React.FC = () => {
           <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl">
             <FilterPanel
               categories={mockCategories}
-              selectedCategory={filters.categoryId}
-              selectedLevel={filters.level}
-              selectedPrice={filters.isFree === undefined ? undefined : filters.isFree ? 'free' : 'paid'}
+              selectedCategory={filters?.categoryId}
+              selectedLevel={filters?.level}
+              selectedPrice={filters?.isFree === undefined ? undefined : filters?.isFree ? 'free' : 'paid'}
               onCategoryChange={handleCategoryChange}
               onLevelChange={handleLevelChange}
               onPriceChange={handlePriceChange}
@@ -117,9 +129,37 @@ export const CoursesPage: React.FC = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             All Courses
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {coursesData?.pagination.total || 0} courses available • Find your perfect learning journey
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+            {coursesData?.pagination?.total || 0} courses available • Find your perfect learning journey
           </p>
+          
+          {/* Search and Sort Bar */}
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search courses..."
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <SortAsc className="w-5 h-5 text-gray-600" />
+              <select
+                value={sortOrder || ''}
+                onChange={(e) => handleSortChange(e.target.value as 'newest' | 'price_low' | 'price_high' | undefined)}
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+              >
+                <option value="">Sort by</option>
+                <option value="newest">Newest</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-8">
@@ -128,9 +168,9 @@ export const CoursesPage: React.FC = () => {
             <div className="sticky top-8">
               <FilterPanel
                 categories={mockCategories}
-                selectedCategory={filters.categoryId}
-                selectedLevel={filters.level}
-                selectedPrice={filters.isFree === undefined ? undefined : filters.isFree ? 'free' : 'paid'}
+                selectedCategory={filters?.categoryId}
+                selectedLevel={filters?.level}
+                selectedPrice={filters?.isFree === undefined ? undefined : filters?.isFree ? 'free' : 'paid'}
                 onCategoryChange={handleCategoryChange}
                 onLevelChange={handleLevelChange}
                 onPriceChange={handlePriceChange}
@@ -164,7 +204,12 @@ export const CoursesPage: React.FC = () => {
             {/* Courses Grid */}
             {!loading && coursesData && (
               <>
-                {coursesData.courses.length === 0 ? (
+                {console.log("📊 All courses data:", coursesData.courses)}
+                {console.log("🔢 Courses count:", coursesData.courses?.length)}
+                {console.log("🆔 Course IDs:", coursesData.courses?.map(c => c.id))}
+                {console.log("🖼️ Course thumbnails:", coursesData.courses?.map(c => c.thumbnailUrl))}
+                
+                {(coursesData?.courses?.length || 0) === 0 ? (
                   <div className="text-center py-20">
                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <BookOpen className="w-12 h-12 text-gray-400" />
@@ -175,32 +220,41 @@ export const CoursesPage: React.FC = () => {
                 ) : (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                      {coursesData.courses.map((course) => (
-                        <div key={course.id} className="transform transition-all duration-300 hover:scale-105">
-                          <CourseCard course={course} />
-                        </div>
-                      ))}
+                      {coursesData?.courses?.map((course) => {
+                        console.log("🎯 Rendering course card for:", course.id, course.title);
+                        
+                        if (!course.id) {
+                          console.error("❌ Course missing ID:", course);
+                          return null; // Don't render cards without ID
+                        }
+                        
+                        return (
+                          <div key={course.id} className="transform transition-all duration-300 hover:scale-105">
+                            <CourseCard course={course} />
+                          </div>
+                        );
+                      }) || []}
                     </div>
 
                     {/* Pagination */}
-                    {coursesData.pagination.totalPages > 1 && (
+                    {coursesData?.pagination?.totalPages && coursesData.pagination.totalPages > 1 && (
                       <div className="flex justify-center mt-16">
                         <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-lg border border-gray-200">
                           <button
-                            onClick={() => handlePageChange(filters.page! - 1)}
-                            disabled={filters.page! <= 1}
+                            onClick={() => handlePageChange((filters?.page || 1) - 1)}
+                            disabled={(filters?.page || 1) <= 1}
                             className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700"
                           >
                             Previous
                           </button>
                           
                           <span className="px-4 py-2 text-sm text-gray-600 font-medium">
-                            Page {filters.page} of {coursesData.pagination.totalPages}
+                            Page {(filters?.page || 1)} of {coursesData?.pagination?.totalPages || 1}
                           </span>
                           
                           <button
-                            onClick={() => handlePageChange(filters.page! + 1)}
-                            disabled={filters.page! >= coursesData.pagination.totalPages}
+                            onClick={() => handlePageChange((filters?.page || 1) + 1)}
+                            disabled={(filters?.page || 1) >= (coursesData?.pagination?.totalPages || 1)}
                             className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700"
                           >
                             Next

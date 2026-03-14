@@ -1,7 +1,7 @@
 export interface Instructor {
   id: number;
   name: string;
-  image: string;
+  profileImage: string;
 }
 
 export type CourseLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
@@ -26,7 +26,7 @@ export interface CourseSection {
 export type CourseListItem = {
   id: number;
   title: string;
-  thumbnail: string;
+  thumbnailUrl: string;
   instructor: Instructor;
   rating: number;
   ratingCount: number;

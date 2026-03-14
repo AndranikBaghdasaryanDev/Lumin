@@ -27,7 +27,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
       {/* Course Image */}
       <div className="relative h-48 overflow-hidden">
         <img
-          src={course.thumbnail}
+          src={course.thumbnailUrl}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

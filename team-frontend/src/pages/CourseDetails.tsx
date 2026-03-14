@@ -10,19 +10,28 @@ import {
   User,
   ArrowLeft,
 } from "lucide-react";
-import CourseCard from "../components/CourseCard";
+import CourseCard from "../components/reusable/CourseCard";
 import { LoadingFullPage } from "../components/ui/LoadingFullPage";
 import { useToastStore } from "../stores/toastStore";
-import { fetchCourseById, fetchRelatedCourses } from "../services/courseService";
+import { courseService } from "../lib/api/service/courseService";
 import type { CourseListItem } from "../types/course";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
+  console.log("🎯 CourseDetails component - received ID:", id);
   const toastError = useToastStore((state) => state.error);
   const [course, setCourse] = useState<CourseListItem | null>(null);
   const [relatedCourses, setRelatedCourses] = useState<CourseListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Debug course data when it changes
+  useEffect(() => {
+    if (course) {
+      console.log("📋 Course data:", course);
+      console.log("🖼️ Course thumbnail:", course.thumbnailUrl);
+    }
+  }, [course]);
 
   useEffect(() => {
     const loadCourseData = async () => {
@@ -38,13 +47,18 @@ const CourseDetails = () => {
         setLoading(true);
         setLoadError(null);
 
+        console.log("📡 Making API calls for course ID:", id);
         const [courseResponse, relatedResponse] = await Promise.all([
-          fetchCourseById(id),
-          fetchRelatedCourses(id),
+          courseService.getCourseById(id),
+          courseService.getRelatedCourses(id),
         ]);
 
-        setCourse(courseResponse);
-        setRelatedCourses(relatedResponse);
+        console.log("📦 Course API response:", courseResponse);
+        console.log("📦 Related courses response:", relatedResponse);
+        console.log("🔗 Related courses data:", relatedResponse.data);
+
+        setCourse(courseResponse.data || null);
+        setRelatedCourses(relatedResponse.data || []);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Failed to load course details";
         setLoadError(message);
@@ -114,7 +128,8 @@ const CourseDetails = () => {
   const totalLessons = sections.reduce((acc, section) => acc + section.lessons.length, 0);
   const progressPercentage = course.enrollmentProgress ?? 0;
   const completedLessons = Math.round((totalLessons * progressPercentage) / 100);
-  const categoryLabel = course.categories?.[0] || "General";
+  const categoryLabel = course.categories?.[0] as any;
+  const categoryName = typeof categoryLabel === 'string' ? categoryLabel : categoryLabel?.name || "General";
   const originalPrice = course.discountPrice > 0 && course.discountPrice < course.price
     ? course.price
     : null;
@@ -138,9 +153,16 @@ const CourseDetails = () => {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
           <div className="relative h-64 lg:h-96">
             <img
-              src={course.thumbnail}
+              src={course.thumbnailUrl}
               alt={course.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                console.error("❌ Failed to load course thumbnail:", course.thumbnailUrl);
+                (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x400?text=Course+Image+Not+Available";
+              }}
+              onLoad={() => {
+                console.log("✅ Course thumbnail loaded successfully:", course.thumbnailUrl);
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div className="absolute bottom-6 left-6 right-6 text-white">
@@ -149,7 +171,7 @@ const CourseDetails = () => {
                   {course.level}
                 </span>
                 <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
-                  {categoryLabel}
+                  {categoryName}
                 </span>
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold mb-2">
@@ -316,8 +338,8 @@ const CourseDetails = () => {
               </h3>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                  {course.instructor.image ? (
-                    <img src={course.instructor.image} alt={course.instructor.name} className="w-16 h-16 rounded-full object-cover" />
+                  {course.instructor.profileImage ? (
+                    <img src={course.instructor.profileImage} alt={course.instructor.profileImage} className="w-16 h-16 rounded-full object-cover" />
                   ) : (
                     <User className="w-8 h-8 text-gray-400" />
                   )}
@@ -348,7 +370,7 @@ const CourseDetails = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Category</span>
-                  <span className="font-medium">{categoryLabel}</span>
+                  <span className="font-medium">{categoryName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Last Updated</span>

@@ -23,4 +23,6 @@ export { Error } from './Error';
 
 export { Loading } from './Loading';
 
+export { LoadingFullPage } from './LoadingFullPage';
+
 export { AppToaster } from './toaster';

@@ -118,7 +118,7 @@ export function Home() {
                   {/* Image Container */}
                   <div className="relative h-56 overflow-hidden">
                     <img 
-                      src={course.thumbnail} 
+                      src={course.thumbnailUrl} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                       alt={course.title}
                     />

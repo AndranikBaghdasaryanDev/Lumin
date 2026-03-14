@@ -32,6 +32,12 @@ Axios.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
 
+      // Don't treat 3xx status codes as errors (including 304 Not Modified)
+      if (status >= 300 && status < 400) {
+        console.log(`3xx status code ${status} - treating as success`);
+        return Promise.resolve(error.response);
+      }
+
       if (status === 401) {
         console.error("Unauthorized – token expired");
         localStorage.removeItem("access_token");

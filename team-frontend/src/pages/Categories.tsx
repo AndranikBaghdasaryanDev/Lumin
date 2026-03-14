@@ -5,7 +5,7 @@ import { LoadingFullPage } from "../components/ui/LoadingFullPage";
 import { type Category } from "../types/categories";
 import type { ApiResponse } from "../lib/api/types";
 import { useToastStore } from "../stores/toastStore";
-import { BookOpen, TrendingUp, Users, Star } from "lucide-react";
+import { BookOpen, Users } from "lucide-react";
 
 export const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);

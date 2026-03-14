@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { courseService, type CourseFilters } from '../lib/api/service/courseService';
-import type { CoursesData } from '../types/course';
+import { useCoursesStore } from '../stores/coursesStore';
+import { type CourseFilters } from '../lib/api/service/courseService';
+import { useToastStore } from '../stores/toastStore';
 
 export const useCourses = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { error: showError } = useToastStore();
   
-  const [coursesData, setCoursesData] = useState<CoursesData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    coursesData,
+    loading,
+    error,
+    fetchCourses: storeFetchCourses
+  } = useCoursesStore();
 
   // Get filters from URL
   const getFiltersFromUrl = (): CourseFilters => {
@@ -16,13 +21,17 @@ export const useCourses = () => {
     const level = searchParams.get('level');
     const isFree = searchParams.get('isFree');
     const page = searchParams.get('page');
+    const search = searchParams.get('search');
+    const sort = searchParams.get('sort');
 
     return {
       categoryId: categoryId ? parseInt(categoryId, 10) : undefined,
       level: level as "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | undefined,
       isFree: isFree !== null ? isFree === 'true' : undefined,
       page: page ? parseInt(page, 10) : 1,
-      limit: 12
+      limit: 12,
+      search: search || undefined,
+      sort: sort as "newest" | "price_low" | "price_high" | undefined
     };
   };
 
@@ -37,6 +46,8 @@ export const useCourses = () => {
     if (updatedFilters.level) params.append('level', updatedFilters.level);
     if (updatedFilters.isFree !== undefined) params.append('isFree', updatedFilters.isFree.toString());
     if (updatedFilters.page && updatedFilters.page > 1) params.append('page', updatedFilters.page.toString());
+    if (updatedFilters.search) params.append('search', updatedFilters.search);
+    if (updatedFilters.sort) params.append('sort', updatedFilters.sort);
     
     setSearchParams(params);
   };
@@ -53,51 +64,25 @@ export const useCourses = () => {
     if (filters.categoryId) count++;
     if (filters.level) count++;
     if (filters.isFree !== undefined) count++;
+    if (filters.search) count++;
+    if (filters.sort) count++;
     return count;
   };
 
-  // Fetch courses
-  const fetchCourses = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const filters = getFiltersFromUrl();
-      console.log("Fetching courses with filters:", filters);
-      
-      const response = await courseService.getCourses(filters);
-      console.log("Courses API response:", response);
-      
-      if (response.success && response.data) {
-        setCoursesData(response.data);
-      } else {
-        const errorMessage = response.error?.message || 'Failed to fetch courses';
-        console.error("Courses API error:", response.error);
-        setError(errorMessage);
-        setCoursesData(null);
-      }
-    } catch (err: any) {
-      console.error("Courses fetch error:", err);
-      console.error("Error response:", err.response?.data);
-      console.error("Error status:", err.response?.status);
-      
-      if (err.response?.status === 500) {
-        setError('Server error: Please try again later');
-      } else if (err.response?.status === 401) {
-        setError('Authentication error: Please login again');
-      } else {
-        setError('Failed to fetch courses: ' + (err.message || 'Unknown error'));
-      }
-      setCoursesData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch courses when filters change
+  // Fetch courses when component mounts or when URL filters change
   useEffect(() => {
-    fetchCourses();
-  }, [searchParams]);
+    console.log("🎯 useCourses effect triggered - loading:", loading);
+    const filters = getFiltersFromUrl();
+    console.log("🔄 Triggering store fetchCourses with filters:", filters);
+    storeFetchCourses(filters);
+  }, [searchParams]); // Depend on searchParams to refetch when URL changes
+  
+  // Show toast error when error occurs
+  useEffect(() => {
+    if (error) {
+      showError(error);
+    }
+  }, [error, showError]);
 
   return {
     coursesData,
@@ -107,6 +92,6 @@ export const useCourses = () => {
     updateFilters,
     clearFilters,
     getActiveFiltersCount,
-    refetch: fetchCourses
+    refetch: () => storeFetchCourses(getFiltersFromUrl())
   };
 };
