@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authService } from "../lib/api/service/authService";
 import type { AuthState, RegisterData } from "../types/auth";
-import type { User } from "../types/user";
+import type { User, UserProfile } from "../types/user";
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -17,7 +17,9 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const response = await authService.login(email, password);
-          const { user, accessToken, refreshToken } = response.data;
+          const { user, accessToken, refreshToken } = response.data.data;
+          localStorage.setItem("access_token", accessToken);
+          
           set({
             user,
             accessToken,
@@ -34,6 +36,10 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           await authService.logout();
+          
+          // Մաքրում ենք token-ը localStorage-ից
+          localStorage.removeItem("access_token");
+          
           set({
             user: null,
             accessToken: null,
@@ -51,6 +57,10 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await authService.register(userData);
           const { user, accessToken, refreshToken } = response.data;
+          
+          // Պահում ենք token-ը localStorage-ում
+          localStorage.setItem("access_token", accessToken);
+          
           set({
             user,
             accessToken,
@@ -95,6 +105,16 @@ export const useAuthStore = create<AuthState>()(
       },
       setHasHydrated: (state: boolean) => {
         set({ hasHydrated: state });
+      },
+      updateUserProfile: (profile: UserProfile) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, profile } : null
+        }));
+      },
+      clearUserProfile: () => {
+        set((state) => ({
+          user: state.user ? { ...state.user, profile: undefined } : null
+        }));
       },
     }),
     {

@@ -9,6 +9,14 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const navigate = useNavigate();
+  
+  console.log("🃏 CourseCard render - course data:", course);
+  console.log("🆔 Course ID:", course.id);
+  
+  if (!course.id) {
+    console.error("❌ CourseCard received course without ID:", course);
+    return null; // Don't render if no ID
+  }
 
   const formatDuration = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -16,21 +24,52 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     return `${h > 0 ? h + "h " : ""}${m}m`;
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log("🔗 CourseCard clicked - navigating to:", `/courses/${course.id}`);
+    console.log("🎯 Course ID:", course.id);
+    console.log("📋 Full course object:", course);
+    console.log("🖱️ Click event:", e);
+    
+    if (!course.id) {
+      console.error("❌ Course ID is missing!");
+      return;
+    }
+    
+    console.log("🚀 About to navigate...");
     navigate(`/courses/${course.id}`);
   };
-
+  console.log(course,"nkarr")
   return (
     <div
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          console.log("⌨️ Keyboard navigation triggered");
+          handleClick(e as any);
+        }
+      }}
+      role="button"
+      tabIndex={0}
       className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100/60 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-out"
+      style={{ border: !course.id ? '2px solid red' : undefined }} // Visual indicator for debugging
     >
       {/* Thumbnail */}
       <div className="relative h-48 overflow-hidden">
         <img
-          src={course.thumbnail}
+          src={course.thumbnailUrl}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+          onError={(e) => {
+            console.error("❌ Failed to load thumbnail:", course.thumbnailUrl);
+            console.error("🖼️ Error event:", e);
+            (e.target as HTMLImageElement).src = "https://via.placeholder.com/400x200?text=No+Image";
+          }}
+          onLoad={() => {
+            console.log("✅ Thumbnail loaded successfully:", course.thumbnailUrl);
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         {course.isFree && (
@@ -55,9 +94,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         {/* Instructor */}
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-xs font-bold">{course.instructor.name.charAt(0).toUpperCase()}</span>
+            <span className="text-white text-xs font-bold">
+              {course.instructor?.name ? course.instructor.name.charAt(0).toUpperCase() : '?'}
+            </span>
           </div>
-          <p className="text-sm text-gray-600 font-medium">{course.instructor.name}</p>
+          <p className="text-sm text-gray-600 font-medium">
+            {course.instructor?.name || 'Unknown Instructor'}
+          </p>
         </div>
 
         {/* Rating */}

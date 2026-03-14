@@ -18,12 +18,12 @@ export const PriceCard: React.FC<PriceCardProps> = ({ course }) => {
       <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl">
         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
           <span className="text-white font-bold text-xl">
-            {course.instructor.name.charAt(0).toUpperCase()}
+            {course.instructor.firstName.charAt(0).toUpperCase()}
           </span>
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-gray-900 text-lg">{course.instructor.name}</h3>
-          <p className="text-sm text-gray-600 font-medium">{course.instructor.expertise.join(', ')}</p>
+          <h3 className="font-bold text-gray-900 text-lg">{course.instructor.firstName} {course.instructor.lastName}</h3>
+          <p className="text-sm text-gray-600 font-medium">{course.instructor.bio || 'Instructor'}</p>
         </div>
       </div>
 

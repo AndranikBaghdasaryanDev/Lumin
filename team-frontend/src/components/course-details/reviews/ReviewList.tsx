@@ -1,6 +1,5 @@
 import React from 'react';
 import { Star, User } from 'lucide-react';
-import type { Review } from '../../../types/course.types';
 import type { ReviewListProps } from '../../../types/review.types';
 
 

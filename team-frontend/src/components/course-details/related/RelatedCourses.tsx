@@ -19,7 +19,7 @@ export const RelatedCourses = ({ courseId }: Props) => {
       try {
         setLoading(true)
         const relatedCourses = await courseService.getRelatedCourses(courseId)
-        setCourses(relatedCourses)
+        setCourses(relatedCourses.data || [])
       } catch (err: any) {
         error(err.response?.data?.message || "Failed to load related courses")
     } finally {
