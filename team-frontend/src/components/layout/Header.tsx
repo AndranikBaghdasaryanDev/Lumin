@@ -5,7 +5,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { LogoLumin } from "../reusable/logoLumin";
 
 export const Header = () => {
-  const logout = useAuthStore(state => state.logout);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   const navigate = useNavigate();
@@ -29,12 +28,7 @@ export const Header = () => {
         {/* Desktop Menu - Logic Unchanged */}
         <div className="hidden md:flex items-center gap-2">
           {isAuthenticated ? (
-            <button
-              className="bg-red-50/80 hover:bg-red-100 text-red-600 font-semibold py-2.5 px-6 rounded-xl transition-all duration-200 active:scale-95 border border-red-100/60 shadow-sm hover:shadow-md"
-              onClick={() => logout()}
-            >
-              Logout
-            </button>
+            null
           ) : (
             <>
               <button

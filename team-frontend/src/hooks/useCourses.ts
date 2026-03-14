@@ -61,16 +61,34 @@ export const useCourses = () => {
     try {
       setLoading(true);
       setError(null);
+      
       const filters = getFiltersFromUrl();
+      console.log("Fetching courses with filters:", filters);
+      
       const response = await courseService.getCourses(filters);
+      console.log("Courses API response:", response);
       
       if (response.success && response.data) {
         setCoursesData(response.data);
       } else {
-        setError(response.error?.message || 'Failed to fetch courses');
+        const errorMessage = response.error?.message || 'Failed to fetch courses';
+        console.error("Courses API error:", response.error);
+        setError(errorMessage);
+        setCoursesData(null);
       }
-    } catch (err) {
-      setError('Failed to fetch courses');
+    } catch (err: any) {
+      console.error("Courses fetch error:", err);
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
+      
+      if (err.response?.status === 500) {
+        setError('Server error: Please try again later');
+      } else if (err.response?.status === 401) {
+        setError('Authentication error: Please login again');
+      } else {
+        setError('Failed to fetch courses: ' + (err.message || 'Unknown error'));
+      }
+      setCoursesData(null);
     } finally {
       setLoading(false);
     }

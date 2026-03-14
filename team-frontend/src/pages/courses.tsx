@@ -4,6 +4,7 @@ import CourseCard from '../components/reusable/CourseCard';
 import { FilterPanel } from '../components/filters/FilterPanel';
 import { FilterButton } from '../components/filters/FilterButton';
 import type { Category } from '../types/filters';
+import { BookOpen } from 'lucide-react';
 
 // Mock categories - in a real app, these would come from an API
 const mockCategories: Category[] = [
@@ -25,7 +26,14 @@ export const CoursesPage: React.FC = () => {
     updateFilters,
     clearFilters,
     getActiveFiltersCount,
+    refetch,
   } = useCourses();
+
+  // Debug logging
+  console.log("CoursesPage render - coursesData:", coursesData);
+  console.log("CoursesPage render - loading:", loading);
+  console.log("CoursesPage render - error:", error);
+  console.log("CoursesPage render - courses count:", coursesData?.courses?.length);
 
   const handleCategoryChange = (categoryId: number | undefined) => {
     updateFilters({ categoryId });
@@ -60,17 +68,28 @@ export const CoursesPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl font-semibold mb-2">Error</div>
-          <p className="text-gray-600">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-3">Something went wrong</h3>
+          <p className="text-gray-600 mb-8">{error}</p>
+          <button
+            onClick={refetch}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       {/* Mobile Filter Overlay */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 lg:hidden">
@@ -92,36 +111,40 @@ export const CoursesPage: React.FC = () => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">All Courses</h1>
-          <p className="text-gray-600">
-            {coursesData?.pagination.total || 0} courses available
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            All Courses
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {coursesData?.pagination.total || 0} courses available • Find your perfect learning journey
           </p>
         </div>
 
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-80 flex-shrink-0">
-            <FilterPanel
-              categories={mockCategories}
-              selectedCategory={filters.categoryId}
-              selectedLevel={filters.level}
-              selectedPrice={filters.isFree === undefined ? undefined : filters.isFree ? 'free' : 'paid'}
-              onCategoryChange={handleCategoryChange}
-              onLevelChange={handleLevelChange}
-              onPriceChange={handlePriceChange}
-              onClearAll={clearFilters}
-              activeFiltersCount={getActiveFiltersCount()}
-              isMobile={false}
-            />
+            <div className="sticky top-8">
+              <FilterPanel
+                categories={mockCategories}
+                selectedCategory={filters.categoryId}
+                selectedLevel={filters.level}
+                selectedPrice={filters.isFree === undefined ? undefined : filters.isFree ? 'free' : 'paid'}
+                onCategoryChange={handleCategoryChange}
+                onLevelChange={handleLevelChange}
+                onPriceChange={handlePriceChange}
+                onClearAll={clearFilters}
+                activeFiltersCount={getActiveFiltersCount()}
+                isMobile={false}
+              />
+            </div>
           </aside>
 
           {/* Main Content */}
           <main className="flex-1">
             {/* Mobile Filter Button */}
-            <div className="lg:hidden mb-6">
+            <div className="lg:hidden mb-8">
               <FilterButton
                 activeFiltersCount={getActiveFiltersCount()}
                 onClick={() => setIsMobileFilterOpen(true)}
@@ -130,8 +153,11 @@ export const CoursesPage: React.FC = () => {
 
             {/* Loading State */}
             {loading && (
-              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="flex justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading courses...</p>
+                </div>
               </div>
             )}
 
@@ -139,38 +165,43 @@ export const CoursesPage: React.FC = () => {
             {!loading && coursesData && (
               <>
                 {coursesData.courses.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-gray-500 text-lg mb-2">No courses found</div>
-                    <p className="text-gray-400">Try adjusting your filters</p>
+                  <div className="text-center py-20">
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <BookOpen className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No Courses Found</h3>
+                    <p className="text-gray-500">Try adjusting your filters or check back later</p>
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                       {coursesData.courses.map((course) => (
-                        <CourseCard key={course.id} course={course} />
+                        <div key={course.id} className="transform transition-all duration-300 hover:scale-105">
+                          <CourseCard course={course} />
+                        </div>
                       ))}
                     </div>
 
                     {/* Pagination */}
                     {coursesData.pagination.totalPages > 1 && (
-                      <div className="flex justify-center mt-12">
-                        <div className="flex items-center gap-2">
+                      <div className="flex justify-center mt-16">
+                        <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-lg border border-gray-200">
                           <button
                             onClick={() => handlePageChange(filters.page! - 1)}
                             disabled={filters.page! <= 1}
-                            className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700"
                           >
                             Previous
                           </button>
                           
-                          <span className="px-4 py-2 text-sm text-gray-600">
+                          <span className="px-4 py-2 text-sm text-gray-600 font-medium">
                             Page {filters.page} of {coursesData.pagination.totalPages}
                           </span>
                           
                           <button
                             onClick={() => handlePageChange(filters.page! + 1)}
                             disabled={filters.page! >= coursesData.pagination.totalPages}
-                            className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700"
                           >
                             Next
                           </button>

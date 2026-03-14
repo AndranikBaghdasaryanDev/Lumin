@@ -9,10 +9,15 @@ export const Axios = axios.create({
 })
 Axios.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().accessToken;
+    const token = localStorage.getItem("access_token") ?? useAuthStore.getState().accessToken;
+    console.log("Token from localStorage/store:", token);
+    console.log("Request URL:", config.url);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("Authorization header set:", config.headers.Authorization);
+    } else {
+      console.log("No token found - request without Authorization");
     }
 
     return config;
@@ -29,6 +34,7 @@ Axios.interceptors.response.use(
 
       if (status === 401) {
         console.error("Unauthorized – token expired");
+        localStorage.removeItem("access_token");
         // Clear auth state directly without calling logout API to avoid loop
         useAuthStore.setState({
           user: null,

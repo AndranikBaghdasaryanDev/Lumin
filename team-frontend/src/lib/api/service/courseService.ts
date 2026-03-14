@@ -21,21 +21,21 @@ export const courseService = {
     params.append('page', (filters.page || 1).toString());
     params.append('limit', (filters.limit || 12).toString());
     
-    return Axios.get(`/courses?${params.toString()}`);
+    return Axios.get(`/api/courses?${params.toString()}`);
   },
 
   getCourseById: async (id: string | number): Promise<CourseDetailsResponse> => {
-    const response = await Axios.get(`/courses/${id}`);
+    const response = await Axios.get(`/api/courses/${id}`);
     return response.data;
   },
 
   getCategories: async (): Promise<string[]> => {
-    const response = await Axios.get('/courses/categories');
+    const response = await Axios.get('/api/courses/categories');
     return response.data;
   },
 
   getRelatedCourses: async (id: string): Promise<CourseListItem[]> => {
-    const response = await Axios.get<ApiResponse<CourseListItem[]>>(`/courses/${id}/related`);
+    const response = await Axios.get<ApiResponse<CourseListItem[]>>(`/api/courses/${id}/related`);
     return response.data.data ?? [];
   }
 };
