@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Clock,
@@ -9,186 +10,112 @@ import {
   User,
   ArrowLeft,
 } from "lucide-react";
-
-interface Lesson {
-  id: number;
-  title: string;
-  duration: string;
-  completed: boolean;
-}
-
-interface Module {
-  id: number;
-  title: string;
-  lessons: Lesson[];
-}
-
-interface Course {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  duration: string;
-  students: number;
-  rating: number;
-  reviews: number;
-  price: number;
-  originalPrice: number;
-  instructor: string;
-  instructorBio: string;
-  level: string;
-  category: string;
-  language: string;
-  lastUpdated: string;
-  certificate: boolean;
-  whatYouLearn: string[];
-  requirements: string[];
-  modules: Module[];
-}
+import CourseCard from "../components/reusable/CourseCard";
+import { LoadingFullPage } from "../components/ui/LoadingFullPage";
+import { useToastStore } from "../stores/toastStore";
+import { courseService } from "../lib/api/service/courseService";
+import type { CourseListItem } from "../types/course";
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
+  console.log("🎯 CourseDetails component - received ID:", id);
+  const toastError = useToastStore((state) => state.error);
+  const [course, setCourse] = useState<CourseListItem | null>(null);
+  const [relatedCourses, setRelatedCourses] = useState<CourseListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Mock course data - in a real app, this would come from an API
-  const courseData: { [key: string]: Course } = {
-    "1": {
-      id: "1",
-      title: "React.js Complete Guide",
-      description:
-        "Learn React.js from scratch and build modern web applications with hooks, context, and best practices. This comprehensive course covers everything you need to become a React developer.",
-      image:
-        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
-      duration: "12 hours",
-      students: 1234,
-      rating: 4.8,
-      reviews: 234,
-      price: 89,
-      originalPrice: 149,
-      instructor: "John Smith",
-      instructorBio:
-        "John is a senior React developer with 10+ years of experience building scalable web applications.",
-      level: "Beginner",
-      category: "Web Development",
-      language: "English",
-      lastUpdated: "March 2024",
-      certificate: true,
-      whatYouLearn: [
-        "Build modern React applications from scratch",
-        "Master React Hooks and Context API",
-        "Understand component lifecycle and state management",
-        "Implement routing and navigation",
-        "Work with forms and user input",
-        "Deploy React applications to production",
-      ],
-      requirements: [
-        "Basic knowledge of HTML, CSS, and JavaScript",
-        "Understanding of programming concepts",
-        "A computer with internet connection",
-      ],
-      modules: [
-        {
-          id: 1,
-          title: "Introduction to React",
-          lessons: [
-            {
-              id: 1,
-              title: "What is React?",
-              duration: "8:45",
-              completed: true,
-            },
-            {
-              id: 2,
-              title: "Setting up Development Environment",
-              duration: "12:30",
-              completed: true,
-            },
-            {
-              id: 3,
-              title: "Your First React Component",
-              duration: "15:20",
-              completed: false,
-            },
-            {
-              id: 4,
-              title: "Understanding JSX",
-              duration: "10:15",
-              completed: false,
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "React Components",
-          lessons: [
-            {
-              id: 5,
-              title: "Functional vs Class Components",
-              duration: "18:45",
-              completed: false,
-            },
-            {
-              id: 6,
-              title: "Props and PropTypes",
-              duration: "14:20",
-              completed: false,
-            },
-            {
-              id: 7,
-              title: "State Management Basics",
-              duration: "20:30",
-              completed: false,
-            },
-            {
-              id: 8,
-              title: "Event Handling",
-              duration: "16:10",
-              completed: false,
-            },
-          ],
-        },
-        {
-          id: 3,
-          title: "React Hooks",
-          lessons: [
-            {
-              id: 9,
-              title: "Introduction to Hooks",
-              duration: "12:00",
-              completed: false,
-            },
-            {
-              id: 10,
-              title: "useState Hook Deep Dive",
-              duration: "22:15",
-              completed: false,
-            },
-            {
-              id: 11,
-              title: "useEffect Hook",
-              duration: "25:40",
-              completed: false,
-            },
-            {
-              id: 12,
-              title: "Custom Hooks",
-              duration: "18:30",
-              completed: false,
-            },
-          ],
-        },
-      ],
-    },
+  // Debug course data when it changes
+  useEffect(() => {
+    if (course) {
+      console.log("📋 Course data:", course);
+      console.log("🖼️ Course thumbnail:", course.thumbnailUrl);
+    }
+  }, [course]);
+
+  useEffect(() => {
+    const loadCourseData = async () => {
+      if (!id) {
+        const message = "Course ID is required";
+        setLoadError(message);
+        setLoading(false);
+        toastError(message);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setLoadError(null);
+
+        console.log("📡 Making API calls for course ID:", id);
+        const [courseResponse, relatedResponse] = await Promise.all([
+          courseService.getCourseById(id),
+          courseService.getRelatedCourses(id),
+        ]);
+
+        console.log("📦 Course API response:", courseResponse);
+        console.log("📦 Related courses response:", relatedResponse);
+        console.log("🔗 Related courses data:", relatedResponse.data);
+
+        setCourse(courseResponse.data || null);
+        setRelatedCourses(relatedResponse.data || []);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Failed to load course details";
+        setLoadError(message);
+        setCourse(null);
+        setRelatedCourses([]);
+        toastError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCourseData();
+  }, [id, toastError]);
+
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+
+    return `${minutes}m`;
   };
 
-  const course = courseData[id || "1"];
+  const formatLessonDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
 
-  if (!course) {
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
+  const formatLastUpdated = (date?: string) => {
+    if (!date) {
+      return "N/A";
+    }
+
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return <LoadingFullPage />;
+  }
+
+  if (loadError || !course) {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Course not found
           </h1>
+          <p className="text-gray-600 mb-6">
+            {loadError || "The course you're looking for does not exist."}
+          </p>
           <Link to="/courses" className="text-blue-600 hover:text-blue-700">
             ← Back to Courses
           </Link>
@@ -197,20 +124,18 @@ const CourseDetails = () => {
     );
   }
 
-  const completedLessons = course.modules.reduce(
-    (acc: number, module: Module) => {
-      return (
-        acc + module.lessons.filter((lesson: Lesson) => lesson.completed).length
-      );
-    },
-    0,
-  );
-
-  const totalLessons = course.modules.reduce((acc: number, module: Module) => {
-    return acc + module.lessons.length;
-  }, 0);
-
-  const progressPercentage = (completedLessons / totalLessons) * 100;
+  const sections = course.sections || [];
+  const totalLessons = sections.reduce((acc, section) => acc + section.lessons.length, 0);
+  const progressPercentage = course.enrollmentProgress ?? 0;
+  const completedLessons = Math.round((totalLessons * progressPercentage) / 100);
+  const categoryLabel = course.categories?.[0] as any;
+  const categoryName = typeof categoryLabel === 'string' ? categoryLabel : categoryLabel?.name || "General";
+  const originalPrice = course.discountPrice > 0 && course.discountPrice < course.price
+    ? course.price
+    : null;
+  const currentPrice = course.discountPrice > 0 && course.discountPrice < course.price
+    ? course.discountPrice
+    : course.price;
 
   return (
     <div className="p-6 bg-gray-50 flex-1">
@@ -228,9 +153,16 @@ const CourseDetails = () => {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
           <div className="relative h-64 lg:h-96">
             <img
-              src={course.image}
+              src={course.thumbnailUrl}
               alt={course.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                console.error("❌ Failed to load course thumbnail:", course.thumbnailUrl);
+                (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x400?text=Course+Image+Not+Available";
+              }}
+              onLoad={() => {
+                console.log("✅ Course thumbnail loaded successfully:", course.thumbnailUrl);
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div className="absolute bottom-6 left-6 right-6 text-white">
@@ -239,7 +171,7 @@ const CourseDetails = () => {
                   {course.level}
                 </span>
                 <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
-                  {course.category}
+                  {categoryName}
                 </span>
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold mb-2">
@@ -267,7 +199,7 @@ const CourseDetails = () => {
                   <Clock className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-500">Duration</p>
-                    <p className="font-semibold">{course.duration}</p>
+                    <p className="font-semibold">{formatDuration(course.duration)}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -275,7 +207,7 @@ const CourseDetails = () => {
                   <div>
                     <p className="text-sm text-gray-500">Students</p>
                     <p className="font-semibold">
-                      {course.students.toLocaleString()}
+                      {course.enrollmentCount.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -284,16 +216,16 @@ const CourseDetails = () => {
                   <div>
                     <p className="text-sm text-gray-500">Rating</p>
                     <p className="font-semibold">
-                      {course.rating} ({course.reviews})
+                      {course.rating.toFixed(1)} ({course.ratingCount})
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Award className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-sm text-gray-500">Certificate</p>
+                    <p className="text-sm text-gray-500">Lessons</p>
                     <p className="font-semibold">
-                      {course.certificate ? "Yes" : "No"}
+                      {totalLessons}
                     </p>
                   </div>
                 </div>
@@ -306,7 +238,7 @@ const CourseDetails = () => {
                 What you'll learn
               </h2>
               <div className="space-y-3">
-                {course.whatYouLearn.map((item: string, index: number) => (
+                {(course.whatYouLearn || []).map((item, index) => (
                   <div key={index} className="flex items-start space-x-3">
                     <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <p className="text-gray-700">{item}</p>
@@ -321,7 +253,7 @@ const CourseDetails = () => {
                 Requirements
               </h2>
               <div className="space-y-2">
-                {course.requirements.map((req: string, index: number) => (
+                {(course.requirements || []).map((req, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                     <p className="text-gray-700">{req}</p>
@@ -353,46 +285,40 @@ const CourseDetails = () => {
               </div>
 
               <div className="space-y-4">
-                {course.modules.map((module: Module, moduleIndex: number) => (
+                {sections.map((section, sectionIndex) => (
                   <div
-                    key={module.id}
+                    key={section.id}
                     className="border border-gray-200 rounded-lg overflow-hidden"
                   >
                     <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
                       <h3 className="font-semibold text-gray-900">
-                        Module {moduleIndex + 1}: {module.title}
+                        Section {sectionIndex + 1}: {section.title}
                       </h3>
+                      <p className="text-sm text-gray-600 mt-1">{section.description}</p>
                     </div>
                     <div className="divide-y divide-gray-200">
-                      {module.lessons.map((lesson: Lesson) => (
+                      {section.lessons.map((lesson) => (
                         <div
                           key={lesson.id}
-                          className={`px-4 py-3 flex items-center justify-between hover:bg-gray-50 ${
-                            lesson.completed ? "bg-green-50" : ""
-                          }`}
+                          className="px-4 py-3 flex items-center justify-between hover:bg-gray-50"
                         >
                           <div className="flex items-center space-x-3">
                             <div
-                              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                lesson.completed
-                                  ? "bg-green-500 text-white"
-                                  : "bg-gray-200 text-gray-600"
-                              }`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center ${lesson.isPreview ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}`}
                             >
-                              {lesson.completed ? (
+                              {lesson.isPreview ? (
                                 <CheckCircle className="w-4 h-4" />
                               ) : (
                                 <Play className="w-4 h-4" />
                               )}
                             </div>
-                            <span
-                              className={`text-sm ${lesson.completed ? "text-gray-500 line-through" : "text-gray-900"}`}
-                            >
-                              {lesson.title}
-                            </span>
+                            <div>
+                              <span className="text-sm text-gray-900">{lesson.title}</span>
+                              <p className="text-xs text-gray-500">{lesson.description}</p>
+                            </div>
                           </div>
                           <span className="text-sm text-gray-500">
-                            {lesson.duration}
+                            {formatLessonDuration(lesson.durationSeconds)}
                           </span>
                         </div>
                       ))}
@@ -412,16 +338,20 @@ const CourseDetails = () => {
               </h3>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-gray-400" />
+                  {course.instructor.profileImage ? (
+                    <img src={course.instructor.profileImage} alt={course.instructor.profileImage} className="w-16 h-16 rounded-full object-cover" />
+                  ) : (
+                    <User className="w-8 h-8 text-gray-400" />
+                  )}
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    {course.instructor}
+                    {course.instructor.name}
                   </h4>
-                  <p className="text-sm text-gray-600">Senior Developer</p>
+                  <p className="text-sm text-gray-600">Course Instructor</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-600">{course.instructorBio}</p>
+              <p className="text-sm text-gray-600">Learn from an experienced instructor in this subject area.</p>
             </div>
 
             {/* Course Details */}
@@ -436,15 +366,15 @@ const CourseDetails = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Language</span>
-                  <span className="font-medium">{course.language}</span>
+                  <span className="font-medium">{course.language || "N/A"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Category</span>
-                  <span className="font-medium">{course.category}</span>
+                  <span className="font-medium">{categoryName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Last Updated</span>
-                  <span className="font-medium">{course.lastUpdated}</span>
+                  <span className="font-medium">{formatLastUpdated(course.updatedAt)}</span>
                 </div>
               </div>
             </div>
@@ -454,26 +384,46 @@ const CourseDetails = () => {
               <div className="mb-4">
                 <div className="flex items-baseline space-x-2">
                   <span className="text-3xl font-bold text-gray-900">
-                    ${course.price}
+                    {course.isFree ? "Free" : `$${currentPrice}`}
                   </span>
-                  <span className="text-lg text-gray-500 line-through">
-                    ${course.originalPrice}
-                  </span>
+                  {originalPrice && (
+                    <span className="text-lg text-gray-500 line-through">
+                      ${originalPrice}
+                    </span>
+                  )}
                 </div>
-                <p className="text-sm text-green-600 font-medium mt-1">
-                  Save ${course.originalPrice - course.price} (
-                  {Math.round((1 - course.price / course.originalPrice) * 100)}%
-                  off)
-                </p>
+                {originalPrice && (
+                  <p className="text-sm text-green-600 font-medium mt-1">
+                    Save ${originalPrice - currentPrice} (
+                    {Math.round((1 - currentPrice / originalPrice) * 100)}%
+                    off)
+                  </p>
+                )}
               </div>
               <button className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                Enroll Now
+                {course.isEnrolled ? "Continue Learning" : "Enroll Now"}
               </button>
               <p className="text-xs text-gray-500 text-center mt-3">
                 30-day money back guarantee
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Courses</h2>
+
+          {relatedCourses.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <p className="text-gray-600">No related courses found.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {relatedCourses.map((relatedCourse) => (
+                <CourseCard key={relatedCourse.id} course={relatedCourse} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

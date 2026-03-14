@@ -6,10 +6,11 @@ import { Register } from "../pages/register";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import DashboardLayout from "../components/DashboardLayout";
 import DashboardPage from "../pages/dashboard";
-import CoursesList from "../pages/CoursesList";
+import { CoursesPage } from "../pages/courses";
 import CourseDetails from "../pages/CourseDetails";
 import { CategoriesPage } from "../pages/Categories";
 import { PaginationDemo } from "../pages/pagination-demo";
+import { ProfilePage } from "../pages/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         children: [
-          { index: true, element: <CoursesList /> },
+          { index: true, element: <CoursesPage /> },
           { path: ":id", element: <CourseDetails /> },
         ],
       },
@@ -48,6 +49,15 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         children: [{ index: true, element: <CategoriesPage /> }],
+      },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [{ index: true, element: <ProfilePage /> }],
       },
     ],
   },

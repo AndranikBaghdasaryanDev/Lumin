@@ -38,7 +38,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, className = '' }
       {/* Course Thumbnail */}
       <div className="relative aspect-video bg-gray-100 overflow-hidden">
         <img
-          src={course.thumbnail || '/api/placeholder/400/225'}
+          src={course.thumbnailUrl || '/api/placeholder/400/225'}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
           onError={(e) => {

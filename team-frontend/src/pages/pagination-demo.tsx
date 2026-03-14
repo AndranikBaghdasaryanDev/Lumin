@@ -1,4 +1,3 @@
-import React from 'react';
 import PaginatedContent from '../components/shared/PaginatedContent';
 import type { PaginationMeta } from '../types/pagination.types';
 
